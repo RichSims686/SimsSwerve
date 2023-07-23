@@ -22,37 +22,37 @@ public class ModuleIOFalcon500 implements ModuleIO {
     private final TalonFX  turnMotor;
     private final CANcoder turnEncoder;
     private final double initialOffsetRadians;
+    private final InvertedValue driveInverted;
 
     public ModuleIOFalcon500(DriveModulePosition position) {
-        InvertedValue driveInverted;
         switch(position) {
             case FRONT_LEFT:
                 driveMotor = new TalonFX(CANDevices.frontLeftDriveMotorID, CANDevices.driveCanBusName);
                 turnMotor = new TalonFX(CANDevices.frontLeftTurnMotorID, CANDevices.driveCanBusName);
                 turnEncoder = new CANcoder(CANDevices.frontLeftTurnEncoderID, CANDevices.driveCanBusName);
-                driveInverted = InvertedValue.Clockwise_Positive;
-                initialOffsetRadians = DriveConstants.frontLeftAngleOffset;
+                driveInverted = DriveConstants.driveInverted[position.ordinal()];
+                initialOffsetRadians = Units.rotationsToRadians(DriveConstants.cancoderOffsetRotations[position.ordinal()]);
                 break;
             case FRONT_RIGHT:
                 driveMotor = new TalonFX(CANDevices.frontRightDriveMotorID, CANDevices.driveCanBusName);
                 turnMotor = new TalonFX(CANDevices.frontRightTurnMotorID, CANDevices.driveCanBusName);
                 turnEncoder = new CANcoder(CANDevices.frontRightTurnEncoderID, CANDevices.driveCanBusName);
-                driveInverted = InvertedValue.CounterClockwise_Positive;
-                initialOffsetRadians = DriveConstants.frontRightAngleOffset;
+                driveInverted = DriveConstants.driveInverted[position.ordinal()];
+                initialOffsetRadians = Units.rotationsToRadians(DriveConstants.cancoderOffsetRotations[position.ordinal()]);
                 break;
             case BACK_LEFT:
                 driveMotor = new TalonFX(CANDevices.backLeftDriveMotorID, CANDevices.driveCanBusName);
                 turnMotor = new TalonFX(CANDevices.backLeftTurnMotorID, CANDevices.driveCanBusName);
                 turnEncoder = new CANcoder(CANDevices.backLeftTurnEncoderID, CANDevices.driveCanBusName);
-                driveInverted = InvertedValue.Clockwise_Positive;
-                initialOffsetRadians = DriveConstants.backLeftAngleOffset;
+                driveInverted = DriveConstants.driveInverted[position.ordinal()];
+                initialOffsetRadians = Units.rotationsToRadians(DriveConstants.cancoderOffsetRotations[position.ordinal()]);
                 break;
             case BACK_RIGHT:
                 driveMotor = new TalonFX(CANDevices.backRightDriveMotorID, CANDevices.driveCanBusName);
                 turnMotor = new TalonFX(CANDevices.backRightTurnMotorID, CANDevices.driveCanBusName);
                 turnEncoder = new CANcoder(CANDevices.backRightTurnEncoderID, CANDevices.driveCanBusName);
-                driveInverted = InvertedValue.CounterClockwise_Positive;
-                initialOffsetRadians = DriveConstants.backRightAngleOffset;
+                driveInverted = DriveConstants.driveInverted[position.ordinal()];
+                initialOffsetRadians = Units.rotationsToRadians(DriveConstants.cancoderOffsetRotations[position.ordinal()]);
                 break;
             default:
                 throw new InvalidParameterException("Invalid module index for ModuleIOFalcon500");
@@ -61,7 +61,7 @@ public class ModuleIOFalcon500 implements ModuleIO {
         /** Configure Drive Motors */
         var driveConfig = new TalonFXConfiguration();
         // change factory defaults here
-        driveConfig.MotorOutput.Inverted = driveInverted;       // TODO: check!
+        driveConfig.MotorOutput.Inverted = driveInverted;
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveConfig.MotorOutput.DutyCycleNeutralDeadband = 0.0;
         driveConfig.CurrentLimits.SupplyCurrentLimit = 80.0;

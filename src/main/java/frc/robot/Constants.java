@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.signals.InvertedValue;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -60,18 +62,39 @@ public final class Constants {
             FRONT_LEFT, FRONT_RIGHT, BACK_LEFT, BACK_RIGHT
         }
 
+        // weight with battery and bumpers
+        public static final double weightKg = Units.lbsToKilograms(58.0);
+
         // TODO: update DriveConstants
-        public static final double trackWidthX = Units.inchesToMeters(23.75); // distance between the front and back wheels
-        public static final double trackWidthY = Units.inchesToMeters(17.75); // distance between the left and right wheels
-        public static final double wheelRadiusM = Units.inchesToMeters(2.02);
+        public static final double trackWidthX = Units.inchesToMeters(12.00); // distance between the front and back wheels
+        public static final double trackWidthY = Units.inchesToMeters(12.00); // distance between the left and right wheels
+        public static final double wheelRadiusM = Units.inchesToMeters(4.10/2);
 
-        public static final double driveWheelGearReduction = 6.86;
-        public static final double turnWheelGearReduction = 12.8;
+        public static final double driveWheelGearReduction = 1.0 / ((15.0/60.0)*(28.0/16.0)*(14.0/50.0));
+        public static final double turnWheelGearReduction = 1.0 / ((15.0/32.0)*(10.0/60.0));
 
-        public static final double frontLeftAngleOffset = 2.922;
-        public static final double frontRightAngleOffset = -1.80;
-        public static final double backLeftAngleOffset = 1.681;
-        public static final double backRightAngleOffset =  1.039;
+        // absolute position of cancoder when drive wheel is facing 'forward'
+        public static final double[] cancoderOffsetRotations = {
+            0.139160,  // front left
+            0.315430,  // front right
+            0.178467,  // back left
+            0.177490,  // back right
+        };
+
+        public static final InvertedValue[] driveInverted = {
+            InvertedValue.Clockwise_Positive,           // front left
+            InvertedValue.CounterClockwise_Positive,    // front right
+            InvertedValue.Clockwise_Positive,           // back left
+            InvertedValue.CounterClockwise_Positive,    // back right
+        };
+        
+        public static final SwerveDriveKinematics kinematics = 
+            new SwerveDriveKinematics(
+                new Translation2d(+trackWidthY / 2.0, +trackWidthX / 2.0), //front left
+                new Translation2d(+trackWidthY / 2.0, -trackWidthX / 2.0), //front right
+                new Translation2d(-trackWidthY / 2.0, +trackWidthX / 2.0), //rear left
+                new Translation2d(-trackWidthY / 2.0, -trackWidthX / 2.0) //rear right
+        );
 
         public static final double[] driveRealKps = {0.7, 0.4, 0.7, 0.7};
         public static final double[] driveRealKds = {3.5, 2.5, 3.7, 3.5};
@@ -80,13 +103,6 @@ public final class Constants {
         public static final double driveSnapKi = 0;
         public static final double driveSnapKd = 0;
 
-        public static final SwerveDriveKinematics kinematics = 
-            new SwerveDriveKinematics(
-                new Translation2d(trackWidthY / 2.0, trackWidthX / 2.0), //front left
-                new Translation2d(trackWidthY / 2.0, -trackWidthX / 2.0), //front right
-                new Translation2d(-trackWidthY / 2.0, trackWidthX / 2.0), //rear left
-                new Translation2d(-trackWidthY / 2.0, -trackWidthX / 2.0) //rear right
-        );
 
         public static final double maxDriveSpeed = 5;
         public static final double maxTurnRate = 2 * Math.PI;
