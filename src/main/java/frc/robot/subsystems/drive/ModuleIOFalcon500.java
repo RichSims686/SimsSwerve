@@ -2,16 +2,17 @@ package frc.robot.subsystems.drive;
 
 import java.security.InvalidParameterException;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.sensors.CANCoder;
-import com.ctre.phoenix.sensors.CANCoderStatusFrame;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Constants;
 import frc.robot.Constants.CANDevices;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.DriveModulePosition;
@@ -19,112 +20,128 @@ import frc.robot.Constants.DriveConstants.DriveModulePosition;
 public class ModuleIOFalcon500 implements ModuleIO {
     private final TalonFX  driveMotor;
     private final TalonFX  turnMotor;
-    private final CANCoder turnEncoder;
+    private final CANcoder turnEncoder;
     private final double initialOffsetRadians;
 
     public ModuleIOFalcon500(DriveModulePosition position) {
+        InvertedValue driveInverted;
         switch(position) {
             case FRONT_LEFT:
                 driveMotor = new TalonFX(CANDevices.frontLeftDriveMotorID, CANDevices.driveCanBusName);
                 turnMotor = new TalonFX(CANDevices.frontLeftTurnMotorID, CANDevices.driveCanBusName);
-                turnEncoder = new CANCoder(CANDevices.frontLeftTurnEncoderID, CANDevices.driveCanBusName);
-                driveMotor.setInverted(false);
+                turnEncoder = new CANcoder(CANDevices.frontLeftTurnEncoderID, CANDevices.driveCanBusName);
+                driveInverted = InvertedValue.Clockwise_Positive;
                 initialOffsetRadians = DriveConstants.frontLeftAngleOffset;
                 break;
             case FRONT_RIGHT:
                 driveMotor = new TalonFX(CANDevices.frontRightDriveMotorID, CANDevices.driveCanBusName);
                 turnMotor = new TalonFX(CANDevices.frontRightTurnMotorID, CANDevices.driveCanBusName);
-                turnEncoder = new CANCoder(CANDevices.frontRightTurnEncoderID, CANDevices.driveCanBusName);
-                driveMotor.setInverted(true);
+                turnEncoder = new CANcoder(CANDevices.frontRightTurnEncoderID, CANDevices.driveCanBusName);
+                driveInverted = InvertedValue.CounterClockwise_Positive;
                 initialOffsetRadians = DriveConstants.frontRightAngleOffset;
                 break;
             case BACK_LEFT:
                 driveMotor = new TalonFX(CANDevices.backLeftDriveMotorID, CANDevices.driveCanBusName);
                 turnMotor = new TalonFX(CANDevices.backLeftTurnMotorID, CANDevices.driveCanBusName);
-                turnEncoder = new CANCoder(CANDevices.backLeftTurnEncoderID, CANDevices.driveCanBusName);
-                driveMotor.setInverted(false);
+                turnEncoder = new CANcoder(CANDevices.backLeftTurnEncoderID, CANDevices.driveCanBusName);
+                driveInverted = InvertedValue.Clockwise_Positive;
                 initialOffsetRadians = DriveConstants.backLeftAngleOffset;
                 break;
             case BACK_RIGHT:
                 driveMotor = new TalonFX(CANDevices.backRightDriveMotorID, CANDevices.driveCanBusName);
                 turnMotor = new TalonFX(CANDevices.backRightTurnMotorID, CANDevices.driveCanBusName);
-                turnEncoder = new CANCoder(CANDevices.backRightTurnEncoderID, CANDevices.driveCanBusName);
-                driveMotor.setInverted(true);
+                turnEncoder = new CANcoder(CANDevices.backRightTurnEncoderID, CANDevices.driveCanBusName);
+                driveInverted = InvertedValue.CounterClockwise_Positive;
                 initialOffsetRadians = DriveConstants.backRightAngleOffset;
                 break;
             default:
                 throw new InvalidParameterException("Invalid module index for ModuleIOFalcon500");
         }
 
-        driveMotor.configFactoryDefault(1000);
-        turnMotor.configFactoryDefault(1000);
+        /** Configure Drive Motors */
+        var driveConfig = new TalonFXConfiguration();
+        // change factory defaults here
+        driveConfig.MotorOutput.Inverted = driveInverted;       // TODO: check!
+        driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        driveConfig.MotorOutput.DutyCycleNeutralDeadband = 0.0;
+        driveConfig.CurrentLimits.SupplyCurrentLimit = 80.0;
+        driveConfig.CurrentLimits.SupplyCurrentThreshold = 70.0;
+        driveConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
+        driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        driveMotor.getConfigurator().apply(driveConfig);
+
+        /** Configure Turn Motors */
+        var turnConfig = new TalonFXConfiguration();
+        // change factory defaults here
+        turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;  // TODO: check!
+        turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        turnConfig.MotorOutput.DutyCycleNeutralDeadband = 0.0;        
+        turnConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
+        turnConfig.CurrentLimits.SupplyCurrentThreshold = 30.0;
+        turnConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
+        turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        turnMotor.getConfigurator().apply(turnConfig);
+
         setFramePeriods(driveMotor, true);
         setFramePeriods(turnMotor, false);
 
-        driveMotor.setNeutralMode(NeutralMode.Brake);
-        turnMotor.setNeutralMode(NeutralMode.Brake);
-        
-        turnMotor.setInverted(true);
-        
-        // TODO: disable VoltageCompensation because of deadband problems???
-        driveMotor.configVoltageCompSaturation(12, 1000);
-        driveMotor.enableVoltageCompensation(true);
-        turnMotor.configVoltageCompSaturation(12, 1000);
-        turnMotor.enableVoltageCompensation(true);
 
-        driveMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 70, 80, 1));
-        turnMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 30, 40, 1));
-
-        driveMotor.configNeutralDeadband(0, 1000);
-        turnMotor.configNeutralDeadband(0, 1000);
-
-        turnEncoder.configFactoryDefault(1000);
-        turnEncoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, 20, 1000);
-        turnEncoder.setStatusFramePeriod(CANCoderStatusFrame.VbatAndFaults, 255, 1000);
+        /** Configure CANcoders */
+        var cancoderConfig = new CANcoderConfiguration(); 
+        // change factory defaults here
+        turnEncoder.getConfigurator().apply(cancoderConfig);
+        turnEncoder.getPosition().setUpdateFrequency(Constants.loopFrequencyHz);
+        turnEncoder.getVelocity().setUpdateFrequency(Constants.loopFrequencyHz);
+        turnEncoder.getSupplyVoltage().setUpdateFrequency(Constants.CANDevices.minCanUpdateRate);
+        turnEncoder.getFaultField().setUpdateFrequency(Constants.CANDevices.minCanUpdateRate);
     }
 
     public void updateInputs(ModuleIOInputs inputs) {
 
-        // TODO: update to latest CTRE API so we get better units
-        inputs.drivePositionRad = driveMotor.getSelectedSensorPosition() / 2048.0 * 2.0 * Math.PI / DriveConstants.driveWheelGearReduction;
-        inputs.driveVelocityRadPerSec = driveMotor.getSelectedSensorVelocity() / 2048 * 2.0 * Math.PI / DriveConstants.driveWheelGearReduction * 10;
-        inputs.driveAppliedVolts = driveMotor.getMotorOutputVoltage();
-        inputs.driveCurrentAmps = driveMotor.getStatorCurrent();
+        inputs.drivePositionRad =       Units.rotationsToRadians(driveMotor.getPosition().getValue()) / DriveConstants.driveWheelGearReduction;
+        inputs.driveVelocityRadPerSec = Units.rotationsToRadians(driveMotor.getVelocity().getValue()) / DriveConstants.driveWheelGearReduction;
+        inputs.driveAppliedVolts =      driveMotor.getSupplyVoltage().getValue();
+        inputs.driveCurrentAmps =       driveMotor.getSupplyCurrent().getValue();
 
-        inputs.turnPositionRad = MathUtil.angleModulus(Units.degreesToRadians(turnEncoder.getPosition())) - initialOffsetRadians;
-        inputs.turnVelocityRadPerSec = turnEncoder.getVelocity();
-        inputs.turnAppliedVolts = turnMotor.getMotorOutputVoltage();
-        inputs.turnCurrentAmps = turnMotor.getStatorCurrent();
+        inputs.turnPositionRad =        MathUtil.angleModulus(Units.rotationsToRadians(turnEncoder.getPosition().getValue())) - initialOffsetRadians;
+        inputs.turnVelocityRadPerSec =  Units.rotationsToRadians(turnEncoder.getVelocity().getValue());
+        inputs.turnAppliedVolts =       turnMotor.getSupplyVoltage().getValue();
+        inputs.turnCurrentAmps =        turnMotor.getSupplyCurrent().getValue();
     }
 
     public void zeroEncoders() {
-        turnEncoder.setPositionToAbsolute(1000);
-        driveMotor.setSelectedSensorPosition(0, 0, 1000);
+        driveMotor.setRotorPosition(0.0);
+        turnEncoder.setPosition(turnEncoder.getAbsolutePosition().getValue());
     }
 
     public void setDriveVoltage(double volts) {
-        driveMotor.set(ControlMode.PercentOutput, volts/12);
+        driveMotor.setControl(new DutyCycleOut(volts / 12));
     }
 
     public void setTurnVoltage(double volts) {
-        turnMotor.set(ControlMode.PercentOutput, volts/12);
+        turnMotor.setControl(new DutyCycleOut(volts / 12));
     }
 
     private static void setFramePeriods(TalonFX talon, boolean needMotorSensor) {
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 255, 1000);
-        if (!needMotorSensor) {
-           talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 255, 1000);
-        }
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 255, 1000);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 255, 1000);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 255, 1000);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 255, 1000);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 255, 1000);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_9_MotProfBuffer, 255, 1000);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 255, 1000);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 255, 1000);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, 255, 1000);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 255, 1000);
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1, 255, 1000);
+        // reduce rates of most status frames
+
+        // TODO: revisit figuring out what getters to slow down
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, 255, 1000);
+        // if (!needMotorSensor) {
+        //    talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 255, 1000);
+        // }
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_3_Quadrature, 255, 1000);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_4_AinTempVbat, 255, 1000);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_6_Misc, 255, 1000);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_7_CommStatus, 255, 1000);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, 255, 1000);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_9_MotProfBuffer, 255, 1000);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 255, 1000);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 255, 1000);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, 255, 1000);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 255, 1000);
+        // talon.setStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1, 255, 1000);
+
+        talon.getPosition().setUpdateFrequency(Constants.loopFrequencyHz);
     }
 }

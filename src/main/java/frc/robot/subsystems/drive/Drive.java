@@ -62,13 +62,8 @@ public class Drive extends SubsystemBase {
     }
 
     // initialize pose estimator
-    SwerveModulePosition[] modulePositions = new SwerveModulePosition[DriveConstants.numDriveModules];
-    for (int i = 0; i < DriveConstants.numDriveModules; i++) {
-      modulePositions[i] = modules[i].getPosition();
-    }
-
     Pose2d initialPoseMeters = new Pose2d();
-    poseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), modulePositions, initialPoseMeters);
+    poseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), initialPoseMeters);
   }
 
   public void periodic() {
@@ -151,11 +146,7 @@ public class Drive extends SubsystemBase {
     Logger.getInstance().recordOutput("SwerveStates/Measured", measuredStates);
 
     // Update odometry
-    SwerveModulePosition[] modulePositions = new SwerveModulePosition[DriveConstants.numDriveModules];
-    for (int i = 0; i < DriveConstants.numDriveModules; i++) {
-      modulePositions[i] = modules[i].getPosition();
-    }    
-    poseEstimator.update(getGyroRotation(), modulePositions);
+    poseEstimator.update(getGyroRotation(), getModulePositions());
 
     Logger.getInstance().recordOutput("Odometry/Robot", getPose());
 
@@ -274,11 +265,7 @@ public class Drive extends SubsystemBase {
 
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
-    SwerveModulePosition[] modulePositions = new SwerveModulePosition[DriveConstants.numDriveModules];
-    for (int i = 0; i < DriveConstants.numDriveModules; i++) {
-      modulePositions[i] = modules[i].getPosition();
-    }
-    poseEstimator.resetPosition(getGyroRotation(), modulePositions, pose);     
+    poseEstimator.resetPosition(getGyroRotation(), getModulePositions(), pose);     
   }
 
   /** Adds vision data to the pose esimation. */
@@ -295,6 +282,16 @@ public class Drive extends SubsystemBase {
     moduleTranslations[DriveModulePosition.BACK_RIGHT.ordinal()]  = new Translation2d(-DriveConstants.trackWidthX / 2.0, -DriveConstants.trackWidthY / 2.0);
     return moduleTranslations;
   }
+
+  /** Returns an array of module positions. */
+  public SwerveModulePosition[] getModulePositions() {
+    SwerveModulePosition[] modulePositions = new SwerveModulePosition[DriveConstants.numDriveModules];
+    for (int i = 0; i < DriveConstants.numDriveModules; i++) {
+      modulePositions[i] = modules[i].getPosition();
+    }
+    return modulePositions;
+  }
+
 
   /** Runs forwards at the commanded voltage. */
   public void runCharacterizationVolts(double volts) {

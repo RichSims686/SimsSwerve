@@ -7,32 +7,40 @@
 
 package frc.robot.subsystems.drive;
 
-import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.hardware.Pigeon2;
+
 import edu.wpi.first.math.util.Units;
+import frc.robot.Constants;
 
 /** IO implementation for Pigeon2 */
 public class GyroIOPigeon2 implements GyroIO {
-  private final Pigeon2 pigeon;
-  private final double[] yprDegrees = new double[3];
-  private final double[] xyzDps = new double[3];
-
+  private final Pigeon2 pigeon = new Pigeon2(Constants.CANDevices.pigeonCanID, Constants.CANDevices.driveCanBusName);
+  
   public GyroIOPigeon2() {
-    pigeon = new Pigeon2(0);
-    pigeon.configFactoryDefault();
-    pigeon.zeroGyroBiasNow();
-    pigeon.setYaw(0.0);
+    var config = new Pigeon2Configuration(); 
+    // change factory defaults here
+    config.MountPose.MountPoseYaw = 0;
+    config.MountPose.MountPosePitch = 0;
+    config.MountPose.MountPoseRoll = 0;
+    // TODO: configure Pigeon2 XYZ orientation   
+    pigeon.getConfigurator().apply(config);
+
+    // set signals to an appropriate rate
+    pigeon.getYaw().setUpdateFrequency(Constants.loopFrequencyHz);
+
+    // TODO: Phoenix6 replacement for Phoenix5s zeroGyroBiasNow?
   }
 
   public void updateInputs(GyroIOInputs inputs) {
-    pigeon.getYawPitchRoll(yprDegrees);
-    pigeon.getRawGyro(xyzDps);
-    inputs.connected = pigeon.getLastError().equals(ErrorCode.OK);
-    inputs.rollPositionRad = Units.degreesToRadians(yprDegrees[1]);     // cw+
-    inputs.pitchPositionRad = Units.degreesToRadians(-yprDegrees[2]);   // up+
-    inputs.yawPositionRad = Units.degreesToRadians(yprDegrees[0]);      // ccw+
-    inputs.rollVelocityRadPerSec = Units.degreesToRadians(xyzDps[1]);   // cw+
-    inputs.pitchVelocityRadPerSec = Units.degreesToRadians(-xyzDps[0]); // up+
-    inputs.yawVelocityRadPerSec = Units.degreesToRadians(xyzDps[2]);    // ccw+
+    inputs.yawPositionRad =     Units.degreesToRadians( pigeon.getYaw().getValue());    // ccw+
+    inputs.pitchPositionRad =   Units.degreesToRadians(-pigeon.getPitch().getValue());  // up+
+    inputs.rollPositionRad =    Units.degreesToRadians( pigeon.getRoll().getValue());   // cw+
+    // TODO: configure Pigeon2 XYZ orientation    
+    inputs.yawVelocityRadPerSec =   Units.degreesToRadians( pigeon.getAngularVelocityX().getValue());   // ccw+
+    inputs.pitchVelocityRadPerSec = Units.degreesToRadians(-pigeon.getAngularVelocityY().getValue());   // up+
+    inputs.rollVelocityRadPerSec =  Units.degreesToRadians( pigeon.getAngularVelocityZ().getValue());   // cw+
+
+    inputs.connected = pigeon.getYaw().getError().isOK();
   }
 }

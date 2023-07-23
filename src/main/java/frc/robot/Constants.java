@@ -16,6 +16,7 @@ public final class Constants {
     }
 
     public static final double loopPeriodSecs = 0.02;
+    public static final double loopFrequencyHz = 1.0/loopPeriodSecs;
     public static final boolean tuningMode = false;    
     
     public static final class CANDevices {
@@ -42,13 +43,15 @@ public final class Constants {
         public static final int backRightTurnMotorID   = 42;
         public static final int backRightTurnEncoderID = 43;
 
-        public static final int pigeonImuCanID = 0;
+        public static final int pigeonCanID = 0;
+
+        public static final double minCanUpdateRate = 4.0;        
     }
 
     public static final class DIOPorts {
 
-        public static final int switch1 = 1;
-        public static final int switch2 = 2;
+        public static final int brakeSwitchPort = 1;
+        public static final int ledSwitchPort = 2;
     }
     
     public static final class DriveConstants {

@@ -39,8 +39,8 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("Auto Choices");
 
   // TODO: add LED and Brake switches
-  // private DigitalInput brakeSwitch = new DigitalInput(DIOPorts.switch1);
-  // private DigitalInput ledsSwitch = new DigitalInput(DIOPorts.switch2);
+  // private DigitalInput brakeSwitch = new DigitalInput(DIOPorts.brakeSwitchPort);
+  // private DigitalInput ledsSwitch = new DigitalInput(DIOPorts.ledSwitchPort);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -143,11 +143,9 @@ public class RobotContainer {
 
     // drive.setBrakeMode(!brakeSwitch.get());
     // ledManager.setOff(ledsSwitch.get());
-
   }
 
   public void enabledInit() {
-
       // drive.setBrakeMode(true);
       // ledManager.setOff(false);
   }
