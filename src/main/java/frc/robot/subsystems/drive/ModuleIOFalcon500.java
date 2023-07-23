@@ -73,7 +73,7 @@ public class ModuleIOFalcon500 implements ModuleIO {
         /** Configure Turn Motors */
         var turnConfig = new TalonFXConfiguration();
         // change factory defaults here
-        turnConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;  // TODO: check!
+        turnConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         turnConfig.MotorOutput.DutyCycleNeutralDeadband = 0.0;        
         turnConfig.CurrentLimits.SupplyCurrentLimit = 40.0;

@@ -65,7 +65,6 @@ public final class Constants {
         // weight with battery and bumpers
         public static final double weightKg = Units.lbsToKilograms(58.0);
 
-        // TODO: update DriveConstants
         public static final double trackWidthX = Units.inchesToMeters(12.00); // distance between the front and back wheels
         public static final double trackWidthY = Units.inchesToMeters(12.00); // distance between the left and right wheels
         public static final double wheelRadiusM = Units.inchesToMeters(4.10/2);
