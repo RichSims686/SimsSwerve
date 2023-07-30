@@ -11,15 +11,15 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
-    public static final Mode mode = Mode.SIM;
+    public static final Mode mode = Mode.REAL;
 
     public static enum Mode {
         REAL, SIM, REPLAY
     }
+    public static final boolean tuningMode = true;    
 
     public static final double loopPeriodSecs = 0.02;
     public static final double loopFrequencyHz = 1.0/loopPeriodSecs;
-    public static final boolean tuningMode = false;    
     
     public static final class CANDevices {
 
@@ -104,7 +104,7 @@ public final class Constants {
         public static final double driveSnapKd = 0;
 
 
-        public static final double maxDriveSpeed = 5;
+        public static final double maxDriveSpeed = 2;
         public static final double maxTurnRate = 2 * Math.PI;
 
         public static final double driveJoystickDeadbandPercent = 0.12;

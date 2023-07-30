@@ -28,6 +28,8 @@ import frc.robot.Constants.DriveConstants.DriveModulePosition;
 public class Drive extends SubsystemBase {
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+  private Rotation2d prevGyroYaw = new Rotation2d();
+
   private final Module[] modules = new Module[DriveConstants.numDriveModules]; // FL, FR, BL, BR
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(getModuleTranslations());
@@ -64,6 +66,7 @@ public class Drive extends SubsystemBase {
     // initialize pose estimator
     Pose2d initialPoseMeters = new Pose2d();
     poseEstimator = new SwerveDrivePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), initialPoseMeters);
+    prevGyroYaw = poseEstimator.getEstimatedPosition().getRotation();
   }
 
   public void periodic() {
@@ -146,8 +149,18 @@ public class Drive extends SubsystemBase {
     Logger.getInstance().recordOutput("SwerveStates/Measured", measuredStates);
 
     // Update odometry
-    poseEstimator.update(getGyroRotation(), getModulePositions());
-
+    Rotation2d gyroAngle;
+    if (gyroInputs.connected) {
+      gyroAngle = getGyroRotation();
+    } else {
+      // either the gyro is disconnected or we are in a simulation
+      // accumulate a gyro estimate using module kinematics
+      var wheelDeltas = getModulePositionDeltas();        // get change in module positions
+      Twist2d twist = kinematics.toTwist2d(wheelDeltas);  // dtheta will be the estimated change in chassis angle
+      gyroAngle = prevGyroYaw.plus(Rotation2d.fromRadians(twist.dtheta));
+    }
+    poseEstimator.update(gyroAngle, getModulePositions());
+    
     Logger.getInstance().recordOutput("Odometry/Robot", getPose());
 
     // Update field velocity
@@ -167,6 +180,9 @@ public class Drive extends SubsystemBase {
     // for (var module : modules) {
     //   module.setBrakeMode(true);
     // }
+
+    // save values for next loop
+    prevGyroYaw = gyroAngle;
   }
 
   /**
@@ -290,6 +306,15 @@ public class Drive extends SubsystemBase {
       modulePositions[i] = modules[i].getPosition();
     }
     return modulePositions;
+  }
+
+  /** Returns an array of module positions. */
+  public SwerveModulePosition[] getModulePositionDeltas() {
+    SwerveModulePosition[] modulePositionDeltas = new SwerveModulePosition[DriveConstants.numDriveModules];
+    for (int i = 0; i < DriveConstants.numDriveModules; i++) {
+      modulePositionDeltas[i] = modules[i].getPositionDelta();
+    }
+    return modulePositionDeltas;
   }
 
 

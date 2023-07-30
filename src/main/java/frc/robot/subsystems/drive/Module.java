@@ -23,6 +23,8 @@ public class Module {
   private final ModuleIOInputsAutoLogged inputs = new ModuleIOInputsAutoLogged();
   private final int index;
 
+  private SwerveModulePosition prevModulePosition;
+
   private static final LoggedTunableNumber wheelRadius = new LoggedTunableNumber("Drive/Module/WheelRadius");
   private static final LoggedTunableNumber driveKp = new LoggedTunableNumber("Drive/Module/DriveKp");
   private static final LoggedTunableNumber driveKd = new LoggedTunableNumber("Drive/Module/DriveKd");
@@ -41,19 +43,22 @@ public class Module {
       driveKd.initDefault(0.0);
       driveKs.initDefault(0.1);
       driveKv.initDefault(0.1);
-      turnKp.initDefault(0.1);
+      turnKp.initDefault(10.0);
       turnKd.initDefault(0.0);
   }
 
   public Module(ModuleIO io, int index) {
     this.io = io;
     this.index = index;
+    prevModulePosition = getPosition();
 
     turnFeedback.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   /** Updates inputs and checks tunable numbers. */
   public void periodic() {
+    prevModulePosition = getPosition();
+
     io.updateInputs(inputs);
     Logger.getInstance().processInputs("Drive/Module" + Integer.toString(index), inputs);
 
@@ -116,7 +121,7 @@ public class Module {
 
   /** Returns the current turn angle of the module. */
   public Rotation2d getAngle() {
-    return new Rotation2d(MathUtil.angleModulus(inputs.turnAbsolutePositionRad));
+    return new Rotation2d(MathUtil.angleModulus(inputs.turnPositionRad));
   }
 
   /** Returns the current drive position of the module in meters. */
@@ -139,6 +144,13 @@ public class Module {
     return new SwerveModuleState(getVelocityMetersPerSec(), getAngle());
   }
 
+  /** Returns change in module position since last tick */
+  public SwerveModulePosition getPositionDelta() {
+    var currentModulePosition = getPosition();
+    return new SwerveModulePosition(currentModulePosition.distanceMeters - prevModulePosition.distanceMeters,
+                                    currentModulePosition.angle); 
+  }
+
   /** Returns the drive velocity in radians/sec. */
   public double getCharacterizationVelocity() {
     return inputs.driveVelocityRadPerSec;
@@ -148,4 +160,5 @@ public class Module {
   public static double getWheelRadius() {
     return wheelRadius.get();
   }
+
 }
