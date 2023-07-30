@@ -15,7 +15,6 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 
@@ -40,9 +39,9 @@ public class Module {
       wheelRadius.initDefault(Constants.DriveConstants.wheelRadiusM);
       driveKp.initDefault(0.1);
       driveKd.initDefault(0.0);
-      driveKs.initDefault(0.18868);
-      driveKv.initDefault(0.12825);
-      turnKp.initDefault(10.0);
+      driveKs.initDefault(0.1);
+      driveKv.initDefault(0.1);
+      turnKp.initDefault(0.1);
       turnKd.initDefault(0.0);
   }
 

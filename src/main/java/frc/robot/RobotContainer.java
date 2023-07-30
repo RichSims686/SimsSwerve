@@ -11,9 +11,11 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.DriveConstants.DriveModulePosition;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.SpinAuto;
+import frc.robot.subsystems.CANdleSystem;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -34,6 +36,9 @@ public class RobotContainer {
 
   // Controller
   private final CommandXboxController driveController = new CommandXboxController(0);
+
+  // LEDs
+  private final CANdleSystem m_candleSubsystem = new CANdleSystem(driveController.getHID());
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("Auto Choices");
@@ -105,6 +110,12 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    int xButtonNum = 3;
+    int yButtonNum = 4;
+    int bButtonNum = 2;
+    new JoystickButton(driveController.getHID(), xButtonNum).whenPressed(m_candleSubsystem::setColors, m_candleSubsystem);
+    new JoystickButton(driveController.getHID(), yButtonNum).whenPressed(m_candleSubsystem::incrementAnimation, m_candleSubsystem);
+    new JoystickButton(driveController.getHID(), bButtonNum).whenPressed(m_candleSubsystem::decrementAnimation, m_candleSubsystem);
   }
 
 
@@ -115,7 +126,7 @@ public class RobotContainer {
         () -> -driveController.getLeftX(),    // x axis
         () -> -driveController.getLeftY(),    // y axis
         () -> -driveController.getRightX(),   // turn axis
-        () ->driveController.getHID().getLeftBumper(),   // field relative controls
+        () -> driveController.getHID().getLeftBumper(),   // field relative controls
         () -> driveController.getHID().getRightBumper()   // precision speed
         ));
   }

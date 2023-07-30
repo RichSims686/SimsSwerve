@@ -11,7 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
-    public static final Mode mode = Mode.REAL;
+    public static final Mode mode = Mode.SIM;
 
     public static enum Mode {
         REAL, SIM, REPLAY
@@ -46,6 +46,7 @@ public final class Constants {
         public static final int backRightTurnEncoderID = 43;
 
         public static final int pigeonCanID = 0;
+        public static final int candleCanID = 0;
 
         public static final double minCanUpdateRate = 4.0;        
     }
