@@ -28,18 +28,18 @@ public class GyroIOPigeon2 implements GyroIO {
     // set signals to an appropriate rate
     pigeon.getYaw().setUpdateFrequency(Constants.loopFrequencyHz);
 
-    // TODO: Phoenix6 replacement for Phoenix5s zeroGyroBiasNow?
+    pigeon.setYaw(0);
   }
 
   public void updateInputs(GyroIOInputs inputs) {
+    inputs.connected = pigeon.getYaw().getError().isOK();
+  
     inputs.yawPositionRad =     Units.degreesToRadians( pigeon.getYaw().getValue());    // ccw+
     inputs.pitchPositionRad =   Units.degreesToRadians(-pigeon.getPitch().getValue());  // up+
     inputs.rollPositionRad =    Units.degreesToRadians(-pigeon.getRoll().getValue());   // ccw+
-    // TODO: confirm Pigeon2 XYZ orientation    
+  
     inputs.yawVelocityRadPerSec =   Units.degreesToRadians( pigeon.getAngularVelocityZ().getValue());   // ccw+
     inputs.pitchVelocityRadPerSec = Units.degreesToRadians(-pigeon.getAngularVelocityY().getValue());   // up+
     inputs.rollVelocityRadPerSec =  Units.degreesToRadians(-pigeon.getAngularVelocityX().getValue());   // ccw+
-
-    inputs.connected = pigeon.getYaw().getError().isOK();
   }
 }

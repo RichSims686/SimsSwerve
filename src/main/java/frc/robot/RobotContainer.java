@@ -133,10 +133,10 @@ public class RobotContainer {
 
     drive.setDefaultCommand(new DriveWithJoysticks(
         drive,
-        () -> -driveController.getLeftY(),    // forward is field +x axis
-        () -> -driveController.getLeftX(),    //   right is field +y axis
-        () -> -driveController.getRightX(),   // turn axis
-        () -> driveController.getHID().getRightBumper(),  // field relative controls
+        () -> driveController.getLeftY(),    // forward is field +x axis
+        () -> driveController.getLeftX(),    //   right is field +y axis
+        () -> driveController.getRightX(),   // turn axis
+        () -> !driveController.getHID().getRightBumper(),  // field relative controls
         () -> driveController.getHID().getLeftBumper()    // precision speed
         ));
   }
