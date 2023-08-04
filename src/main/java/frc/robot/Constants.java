@@ -11,11 +11,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
-    public static final Mode mode = Mode.REAL;
 
     public static enum Mode {
         REAL, SIM, REPLAY
     }
+
+    public static final Mode mode = Mode.REAL;
     public static final boolean tuningMode = true;    
 
     public static final double loopPeriodSecs = 0.02;
@@ -68,7 +69,7 @@ public final class Constants {
 
         public static final double trackWidthX = Units.inchesToMeters(12.00); // distance between the front and back wheels
         public static final double trackWidthY = Units.inchesToMeters(12.00); // distance between the left and right wheels
-        public static final double wheelRadiusM = Units.inchesToMeters(4.10/2);
+        public static final double wheelRadiusM = Units.inchesToMeters(2.056);
 
         public static final double driveWheelGearReduction = 1.0 / ((15.0/60.0)*(28.0/16.0)*(14.0/50.0));
         public static final double turnWheelGearReduction = 1.0 / ((15.0/32.0)*(10.0/60.0));
@@ -82,10 +83,10 @@ public final class Constants {
         };
 
         public static final InvertedValue[] driveInverted = {
-            InvertedValue.Clockwise_Positive,           // front left
-            InvertedValue.CounterClockwise_Positive,    // front right
-            InvertedValue.Clockwise_Positive,           // back left
-            InvertedValue.CounterClockwise_Positive,    // back right
+            InvertedValue.CounterClockwise_Positive,    // front left
+            InvertedValue.Clockwise_Positive,           // front right
+            InvertedValue.CounterClockwise_Positive,    // back left
+            InvertedValue.Clockwise_Positive,           // back right
         };
         
         public static final SwerveDriveKinematics kinematics = 

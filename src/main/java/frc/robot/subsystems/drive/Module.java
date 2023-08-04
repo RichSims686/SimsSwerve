@@ -41,8 +41,8 @@ public class Module {
       wheelRadius.initDefault(Constants.DriveConstants.wheelRadiusM);
       driveKp.initDefault(0.1);
       driveKd.initDefault(0.0);
-      driveKs.initDefault(0.1);
-      driveKv.initDefault(0.1);
+      driveKs.initDefault(0.14456);
+      driveKv.initDefault(0.14931);
       turnKp.initDefault(5.0);
       turnKd.initDefault(0.0);
   }

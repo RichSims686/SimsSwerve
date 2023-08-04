@@ -1,0 +1,135 @@
+{
+  "version": "2.2.2",
+  "layout": [
+    {
+      "type": 1,
+      "legends": {
+        "left": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": []
+        },
+        "discrete": {
+          "fields": []
+        },
+        "right": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/0",
+              "color": "#3b875a",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/1",
+              "color": "#d993aa",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/2",
+              "color": "#eb987e",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/3",
+              "color": "#5d4f92",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/4",
+              "color": "#a64b6b",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/5",
+              "color": "#dbd345",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/6",
+              "color": "#7e331f",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/7",
+              "color": "#96b637",
+              "show": true
+            }
+          ]
+        }
+      },
+      "title": "Line Graph"
+    },
+    {
+      "type": 5,
+      "fields": [],
+      "listFields": [
+        [
+          {
+            "type": "Robot",
+            "key": "/AdvantageKit/RealOutputs/Odometry/Robot",
+            "fieldTypeIndex": 0
+          }
+        ]
+      ],
+      "options": {
+        "game": "2023",
+        "unitDistance": "meters",
+        "unitRotation": "radians",
+        "origin": "right",
+        "size": 0.75,
+        "allianceBumpers": "auto",
+        "allianceOrigin": "blue",
+        "orientation": "blue left, red right"
+      },
+      "title": "Odometry"
+    },
+    {
+      "type": 6,
+      "fields": [],
+      "listFields": [
+        [],
+        [
+          {
+            "type": "Robot",
+            "key": "/AdvantageKit/RealOutputs/Odometry/Robot",
+            "fieldTypeIndex": 0
+          }
+        ]
+      ],
+      "options": {
+        "field": "Evergreen",
+        "alliance": "auto",
+        "robot": "Duck Bot",
+        "unitDistance": "meters",
+        "unitRotation": "radians"
+      },
+      "title": "3D Field"
+    },
+    {
+      "type": 9,
+      "fields": [
+        "/AdvantageKit/RealOutputs/SwerveStates/Measured",
+        "/AdvantageKit/RealOutputs/SwerveStates/SetpointsOptimized",
+        "/AdvantageKit/Drive/Gyro/YawPositionRad"
+      ],
+      "listFields": [],
+      "options": {
+        "maxSpeed": 4.5,
+        "rotationUnits": "radians",
+        "arrangement": "0,1,2,3",
+        "sizeLeftRight": 0.31,
+        "sizeFrontBack": 0.31,
+        "forwardDirection": "up"
+      },
+      "title": "Swerve"
+    }
+  ]
+}

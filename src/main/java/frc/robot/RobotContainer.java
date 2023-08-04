@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DriveConstants.DriveModulePosition;
+import frc.robot.commands.DriveForwardAuto;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
@@ -126,13 +127,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     if (RobotBase.isReal()) {
-      // TODO: figure out how to configure buttons with CommandXboxController
-      // int xButtonNum = 3;
-      // int yButtonNum = 4;
-      // int bButtonNum = 2;
-      // new JoystickButton(driveController.getHID(), xButtonNum).whenPressed(m_candleSubsystem::setColors, m_candleSubsystem);
-      // new JoystickButton(driveController.getHID(), yButtonNum).whenPressed(m_candleSubsystem::incrementAnimation, m_candleSubsystem);
-      // new JoystickButton(driveController.getHID(), bButtonNum).whenPressed(m_candleSubsystem::decrementAnimation, m_candleSubsystem);
+      driveController.x().onTrue(new InstantCommand(candleSystem::setColors, candleSystem));
+      driveController.y().onTrue(new InstantCommand(candleSystem::incrementAnimation, candleSystem));
+      driveController.b().onTrue(new InstantCommand(candleSystem::decrementAnimation, candleSystem));
     }
   }
 
@@ -141,9 +138,9 @@ public class RobotContainer {
 
     drive.setDefaultCommand(new DriveWithJoysticks(
         drive,
-        () -> driveController.getLeftY(),    // forward is field +x axis
-        () -> driveController.getLeftX(),    //   right is field +y axis
-        () -> driveController.getRightX(),   // turn axis
+        () -> -driveController.getLeftY(),    // forward is field +x axis
+        () -> -driveController.getLeftX(),    //   right is field +y axis
+        () -> -driveController.getRightX(),   // turn axis
         () -> !driveController.getHID().getRightBumper(),  // field relative controls
         () -> driveController.getHID().getLeftBumper()    // precision speed
         ));
@@ -155,8 +152,10 @@ public class RobotContainer {
       autoChooser.addDefaultOption("Do Nothing",
           new AutoRoutine(AutoPosition.ORIGIN, new InstantCommand()));
 
+      autoChooser.addOption("Drive Forward", new AutoRoutine(AutoPosition.ORIGIN, new DriveForwardAuto(drive)));
+            
       autoChooser.addOption("Spin", new AutoRoutine(AutoPosition.ORIGIN, new SpinAuto(drive)));
-                
+            
       autoChooser.addOption(
           "Reset Odometry", new AutoRoutine(AutoPosition.ORIGIN, new InstantCommand(() -> drive.setPose(new Pose2d()))));
 
@@ -206,10 +205,13 @@ public class RobotContainer {
     return routine.command;
   }
 
-
+  public void disabledInit() {
+    if (RobotBase.isReal()) {
+      candleSystem.changeAnimation(AnimationTypes.Rainbow);
+    }
+  }
+  
   public void disabledPeriodic() {
-    candleSystem.changeAnimation(AnimationTypes.Rainbow);
-
     // if (activeAutoCommand == null || !activeAutoName.equals(autoChooser.getSelected())) {
     //     activeAutoCommand = new AutoRoutines(autoChooser.getSelected(), drive, pivot, telescope, wrist, intake);
     //     activeAutoName = autoChooser.getSelected();

@@ -85,6 +85,7 @@ public class ModuleIOFalcon500 implements ModuleIO {
         setFramePeriods(driveMotor, true);
         setFramePeriods(turnMotor, false);
 
+        zeroEncoders();
 
         /** Configure CANcoders */
         var cancoderConfig = new CANcoderConfiguration(); 
