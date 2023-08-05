@@ -92,6 +92,11 @@
       "title": "Odometry"
     },
     {
+      "type": 3,
+      "field": "/AdvantageKit/RealOutputs/Console",
+      "title": "Console"
+    },
+    {
       "type": 6,
       "fields": [],
       "listFields": [

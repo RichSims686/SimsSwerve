@@ -124,6 +124,11 @@ public class Module {
     return new Rotation2d(MathUtil.angleModulus(inputs.turnPositionRad));
   }
 
+  /** Returns the current drive position of the module in radians. */
+  public double getPositionRadians() {
+    return inputs.drivePositionRad;
+  }
+
   /** Returns the current drive position of the module in meters. */
   public double getPositionMeters() {
     return inputs.drivePositionRad * wheelRadius.get();
@@ -159,6 +164,11 @@ public class Module {
   /** Returns the drive wheel radius. */
   public static double getWheelRadius() {
     return wheelRadius.get();
+  }
+
+  /** Zeros module encoders. */
+  public void zeroEncoders() {
+    io.zeroEncoders();
   }
 
 }

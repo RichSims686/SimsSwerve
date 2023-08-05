@@ -203,6 +203,13 @@ public class Drive extends SubsystemBase {
                 speeds.omegaRadiansPerSecond * DriveConstants.maxTurnRate));
   }
 
+  /** Zeros the drive encoders. */
+  public void zeroEncoders() {
+    for (int i = 0; i < DriveConstants.numDriveModules; i++) {
+      modules[i].zeroEncoders();
+    }
+  }
+
   /** Stops the drive. */
   public void stop() {
     driveVelocity(new ChassisSpeeds());
@@ -317,6 +324,14 @@ public class Drive extends SubsystemBase {
     return modulePositionDeltas;
   }
 
+  /** Returns the average drive distance in radians */
+  public double getAverageModuleDistance() {
+    double avgDist = 0.0;
+    for (int i = 0; i < DriveConstants.numDriveModules; i++) {
+      avgDist += Math.abs(modules[i].getPositionRadians());
+    }
+    return avgDist / DriveConstants.numDriveModules;
+  }
 
   /** Runs forwards at the commanded voltage. */
   public void runCharacterizationVolts(double volts) {

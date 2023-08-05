@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileCommand;
 import frc.robot.Constants.DriveConstants;
@@ -24,32 +25,38 @@ public class BasicDriveAutos {
      * driveForwardAuto, which drives forward along the x-axis a certain distance, 
      * following a trapezoidal profile with maximum speed and acceleration limits
      */
-    public static TrapezoidProfileCommand driveForwardAuto(Drive drive) {
+    public static SequentialCommandGroup driveForwardAuto(Drive drive) {
         return driveForwardAuto(defaultDistanceMeters, drive);
     }
 
-    public static TrapezoidProfileCommand driveForwardAuto(double distanceMeters, Drive drive) {
+    public static SequentialCommandGroup driveForwardAuto(double distanceMeters, Drive drive) {
         return driveForwardAuto(distanceMeters, DriveConstants.maxDriveSpeed, DriveConstants.maxDriveSpeed / timeToMaxSpeed, drive);
     }
 
-    public static TrapezoidProfileCommand driveForwardAuto(double distanceMeters, double maxSpeedMetersPerSec, double maxAccelMetersPerSec2, Drive drive) {
-        return driveLinear(distanceMeters, maxSpeedMetersPerSec, maxAccelMetersPerSec2, true, drive);
+    public static SequentialCommandGroup driveForwardAuto(double distanceMeters, double maxSpeedMetersPerSec, double maxAccelMetersPerSec2, Drive drive) {
+        return new SequentialCommandGroup(
+            new InstantCommand(drive::zeroEncoders),
+            DriveLinearCommand(distanceMeters, maxSpeedMetersPerSec, maxAccelMetersPerSec2, true, drive),
+            PrintEncoderDistanceCommand(drive));
     }
 
     /**
      * driveBackwardAuto, which drives backward along the x-axis a certain distance, 
      * following a trapezoidal profile with maximum speed and acceleration limits
      */
-    public static TrapezoidProfileCommand driveBackwardAuto(Drive drive) {
+    public static SequentialCommandGroup driveBackwardAuto(Drive drive) {
         return driveBackwardAuto(defaultDistanceMeters, drive);
     }
 
-    public static TrapezoidProfileCommand driveBackwardAuto(double distanceMeters, Drive drive) {
+    public static SequentialCommandGroup driveBackwardAuto(double distanceMeters, Drive drive) {
         return driveBackwardAuto(distanceMeters, DriveConstants.maxDriveSpeed, DriveConstants.maxDriveSpeed / timeToMaxSpeed, drive);
     }
 
-    public static TrapezoidProfileCommand driveBackwardAuto(double distanceMeters, double maxSpeedMetersPerSec, double maxAccelMetersPerSec2, Drive drive) {
-        return driveLinear(distanceMeters, maxSpeedMetersPerSec, maxAccelMetersPerSec2, false, drive);
+    public static SequentialCommandGroup driveBackwardAuto(double distanceMeters, double maxSpeedMetersPerSec, double maxAccelMetersPerSec2, Drive drive) {
+        return new SequentialCommandGroup(
+            new InstantCommand(drive::zeroEncoders),
+            DriveLinearCommand(distanceMeters, maxSpeedMetersPerSec, maxAccelMetersPerSec2, false, drive),
+            PrintEncoderDistanceCommand(drive)); 
     }
 
     /**
@@ -82,7 +89,7 @@ public class BasicDriveAutos {
     }
 
     public static TrapezoidProfileCommand spinCcwAuto(double turnRadians, double maxSpeedRadPerSec, double maxAccelRadPerSec2, Drive drive) {
-        return driveRotate(turnRadians, maxSpeedRadPerSec, maxAccelRadPerSec2, true, drive);
+        return DriveRotateCommand(turnRadians, maxSpeedRadPerSec, maxAccelRadPerSec2, true, drive);
     }
 
     /**
@@ -98,7 +105,7 @@ public class BasicDriveAutos {
     }
 
     public static TrapezoidProfileCommand spinCwAuto(double turnRadians, double maxSpeedRadPerSec, double maxAccelRadPerSec2, Drive drive) {
-        return driveRotate(turnRadians, maxSpeedRadPerSec, maxAccelRadPerSec2, false, drive);
+        return DriveRotateCommand(turnRadians, maxSpeedRadPerSec, maxAccelRadPerSec2, false, drive);
     }
 
     /**
@@ -121,7 +128,7 @@ public class BasicDriveAutos {
 
 
     // generates the TrapezoidProfileCommand for driveForwardAuto and driveBackwardAuto
-    private static TrapezoidProfileCommand driveLinear(double distanceMeters, double maxSpeedMetersPerSec, double maxAccelMetersPerSec2, boolean forward, Drive drive) {
+    private static TrapezoidProfileCommand DriveLinearCommand(double distanceMeters, double maxSpeedMetersPerSec, double maxAccelMetersPerSec2, boolean forward, Drive drive) {
         double velocityMult = forward ? +1 : -1;
         return new TrapezoidProfileCommand(
             new TrapezoidProfile(
@@ -137,7 +144,7 @@ public class BasicDriveAutos {
 
 
     // generates the TrapezoidProfileCommand for spinCcwAuto and spinCwAuto
-    private static TrapezoidProfileCommand driveRotate(double turnRadians, double maxSpeedRadPerSec, double maxAccelRadPerSec2, boolean ccw, Drive drive) {
+    private static TrapezoidProfileCommand DriveRotateCommand(double turnRadians, double maxSpeedRadPerSec, double maxAccelRadPerSec2, boolean ccw, Drive drive) {
         double velocityMult = ccw ? +1 : -1;
         return new TrapezoidProfileCommand(
             new TrapezoidProfile(
@@ -149,5 +156,11 @@ public class BasicDriveAutos {
             setpointState -> drive.driveVelocity(new ChassisSpeeds(0.0, 0.0, setpointState.velocity * velocityMult)),
             // Require the drive
             drive);
+    }
+
+    public static PrintFormattedCommand PrintEncoderDistanceCommand(Drive drive) {
+        return new PrintFormattedCommand("Average encoder distance = %.3f radians\n" + 
+            "\tWheel radius can be estimated as \n" +
+            "\t(physical distance measurement / average encoder distance)\n", drive::getAverageModuleDistance);
     }
 }

@@ -16,6 +16,8 @@ public class ModuleIOSim implements ModuleIO {
     private double driveAppliedVolts = 0.0;
     private double turnAppliedVolts = 0.0;
 
+    private boolean zeroEncodersFlag = false;
+
     public void updateInputs(ModuleIOInputs inputs) {
         driveSim.update(Constants.loopPeriodSecs);
         turnSim.update(Constants.loopPeriodSecs);
@@ -29,7 +31,14 @@ public class ModuleIOSim implements ModuleIO {
         while (turnAbsolutePositionRad > 2.0 * Math.PI) {
           turnAbsolutePositionRad -= 2.0 * Math.PI;
         }
-    
+
+        if (zeroEncodersFlag) {
+          inputs.drivePositionRad = 0.0;
+          turnAbsolutePositionRad -= turnRelativePositionRad;
+          turnRelativePositionRad = 0.0;
+          zeroEncodersFlag = false;
+        }
+        
         inputs.drivePositionRad = inputs.drivePositionRad + (driveSim.getAngularVelocityRadPerSec() * Constants.loopPeriodSecs);
         inputs.driveVelocityRadPerSec = driveSim.getAngularVelocityRadPerSec();
         inputs.driveAppliedVolts = driveAppliedVolts;
@@ -52,5 +61,9 @@ public class ModuleIOSim implements ModuleIO {
       public void setTurnVoltage(double volts) {
         turnAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
         turnSim.setInputVoltage(turnAppliedVolts);
+      }
+
+      public void zeroEncoders() {
+        zeroEncodersFlag = true;        
       }
 }
