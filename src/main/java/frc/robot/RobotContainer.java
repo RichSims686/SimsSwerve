@@ -14,11 +14,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DriveConstants.DriveModulePosition;
-import frc.robot.commands.DriveForwardAuto;
+import frc.robot.commands.BasicDriveAutos;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
-import frc.robot.commands.SpinAuto;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -152,9 +151,13 @@ public class RobotContainer {
       autoChooser.addDefaultOption("Do Nothing",
           new AutoRoutine(AutoPosition.ORIGIN, new InstantCommand()));
 
-      autoChooser.addOption("Drive Forward", new AutoRoutine(AutoPosition.ORIGIN, new DriveForwardAuto(drive)));
+      autoChooser.addOption("Drive Forward", new AutoRoutine(AutoPosition.ORIGIN, BasicDriveAutos.driveForwardAuto(drive)));
+      autoChooser.addOption("Drive Backward", new AutoRoutine(AutoPosition.ORIGIN, BasicDriveAutos.driveBackwardAuto(drive)));
+      autoChooser.addOption("Drive Forward then Back", new AutoRoutine(AutoPosition.ORIGIN, BasicDriveAutos.driveForwardThenBackAuto(drive)));
             
-      autoChooser.addOption("Spin", new AutoRoutine(AutoPosition.ORIGIN, new SpinAuto(drive)));
+      autoChooser.addOption("Spin CCW", new AutoRoutine(AutoPosition.ORIGIN, BasicDriveAutos.spinCcwAuto(drive)));
+      autoChooser.addOption("Spin CW", new AutoRoutine(AutoPosition.ORIGIN, BasicDriveAutos.spinCwAuto(drive)));
+      autoChooser.addOption("Spin CCW then CW", new AutoRoutine(AutoPosition.ORIGIN, BasicDriveAutos.spinCcwThenCwAuto(drive)));
             
       autoChooser.addOption(
           "Reset Odometry", new AutoRoutine(AutoPosition.ORIGIN, new InstantCommand(() -> drive.setPose(new Pose2d()))));
