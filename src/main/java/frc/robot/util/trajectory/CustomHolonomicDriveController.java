@@ -13,6 +13,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 
+/** This file is adapted from WPILib's HolonomicDriveController with the following changes:
+ *  - The theta ProfiledPIDController is replaced with a normal (non-profiled) PIDController
+ *    and it is required to pass in the desired angular velocity
+ */
+
 /**
  * This holonomic drive controller can be used to follow trajectories using a holonomic drivetrain
  * (i.e. swerve or mecanum). Holonomic trajectory following is a much simpler problem to solve
@@ -79,37 +84,37 @@ public class CustomHolonomicDriveController {
    * Returns the next output of the holonomic drive controller.
    *
    * @param currentPose The current pose.
-   * @param poseRef The desired pose.
-   * @param linearVelocityRefMeters The linear velocity reference.
-   * @param angleRef The angular reference.
-   * @param angleVelocityRefRadians The angular velocity reference.
+   * @param desiredPose The desired pose.
+   * @param desiredLinearVelocityMetersPerSecond The linear velocity reference.
+   * @param desiredHeading The angular reference.
+   * @param desiredAngularVelocityRadiansPerSecond The angular velocity reference.
    * @return The next output of the holonomic drive controller.
    */
   @SuppressWarnings("LocalVariableName")
   public ChassisSpeeds calculate(
       Pose2d currentPose,
-      Pose2d poseRef,
-      double linearVelocityRefMeters,
-      Rotation2d angleRef,
-      double angleVelocityRefRadians) {
+      Pose2d desiredPose,
+      double desiredLinearVelocityMetersPerSecond,
+      Rotation2d desiredHeading,
+      double desiredAngularVelocityRadiansPerSecond) {
 
     // Calculate feedforward velocities (field-relative).
-    double xFF = linearVelocityRefMeters * poseRef.getRotation().getCos();
-    double yFF = linearVelocityRefMeters * poseRef.getRotation().getSin();
-    double thetaFF = angleVelocityRefRadians;
+    double xFF = desiredLinearVelocityMetersPerSecond * desiredPose.getRotation().getCos();
+    double yFF = desiredLinearVelocityMetersPerSecond * desiredPose.getRotation().getSin();
+    double thetaFF = desiredAngularVelocityRadiansPerSecond;
 
-    m_poseError = poseRef.relativeTo(currentPose);
-    m_rotationError = angleRef.minus(currentPose.getRotation());
+    m_poseError = desiredPose.relativeTo(currentPose);
+    m_rotationError = desiredHeading.minus(currentPose.getRotation());
 
     if (!m_enabled) {
       return ChassisSpeeds.fromFieldRelativeSpeeds(xFF, yFF, thetaFF, currentPose.getRotation());
     }
 
     // Calculate feedback velocities (based on position error).
-    double xFeedback = m_xController.calculate(currentPose.getX(), poseRef.getX());
-    double yFeedback = m_yController.calculate(currentPose.getY(), poseRef.getY());
+    double xFeedback = m_xController.calculate(currentPose.getX(), desiredPose.getX());
+    double yFeedback = m_yController.calculate(currentPose.getY(), desiredPose.getY());
     double thetaFeedback =
-        m_thetaController.calculate(currentPose.getRotation().getRadians(), angleRef.getRadians());
+        m_thetaController.calculate(currentPose.getRotation().getRadians(), desiredHeading.getRadians());
 
     // Return next output.
     return ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -145,4 +150,33 @@ public class CustomHolonomicDriveController {
   public void setEnabled(boolean enabled) {
     m_enabled = enabled;
   }
+
+  
+    /**
+   * Returns the x controller.
+   *
+   * @return X PIDController
+   */
+  public PIDController getXController() {
+    return m_xController;
+  }
+
+  /**
+   * Returns the y controller.
+   *
+   * @return Y PIDController
+   */
+  public PIDController getYController() {
+    return m_yController;
+  }
+
+  /**
+   * Returns the heading controller.
+   *
+   * @return heading ProfiledPIDController
+   */
+  public PIDController getThetaController() {
+    return m_thetaController;
+  }
+
 }

@@ -4,22 +4,31 @@
 
 package frc.robot.subsystems.leds;
 
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-
-import com.ctre.phoenix.led.*;
+import com.ctre.phoenix.led.Animation;
+import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
+import com.ctre.phoenix.led.CANdleConfiguration;
+import com.ctre.phoenix.led.ColorFlowAnimation;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+import com.ctre.phoenix.led.FireAnimation;
+import com.ctre.phoenix.led.LarsonAnimation;
 import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
+import com.ctre.phoenix.led.RainbowAnimation;
+import com.ctre.phoenix.led.RgbFadeAnimation;
+import com.ctre.phoenix.led.SingleFadeAnimation;
+import com.ctre.phoenix.led.StrobeAnimation;
+import com.ctre.phoenix.led.TwinkleAnimation;
 import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
+import com.ctre.phoenix.led.TwinkleOffAnimation;
 import com.ctre.phoenix.led.TwinkleOffAnimation.TwinkleOffPercent;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class CANdleSystem extends SubsystemBase {
     private final CANdle m_candle = new CANdle(Constants.CANDevices.candleCanID, "rio");
     private final int LedCount = 4*18+8;
-    private XboxController joystick;
 
     private Animation m_toAnimate = null;
 
@@ -37,8 +46,7 @@ public class CANdleSystem extends SubsystemBase {
     }
     private AnimationTypes m_currentAnimation;
 
-    public CANdleSystem(XboxController joy) {
-        this.joystick = joy;
+    public CANdleSystem() {
         changeAnimation(AnimationTypes.SetAll);
         CANdleConfiguration configAll = new CANdleConfiguration();
         configAll.statusLedOffWhenActive = true;
@@ -133,14 +141,9 @@ public class CANdleSystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        if(m_toAnimate == null) {
-            m_candle.setLEDs((int)(joystick.getLeftTriggerAxis() * 255), 
-                              (int)(joystick.getRightTriggerAxis() * 255), 
-                              (int)(joystick.getLeftX() * 255));
-        } else {
+        if(m_toAnimate != null) {
             m_candle.animate(m_toAnimate);
         }
-        m_candle.modulateVBatOutput(joystick.getRightY());
     }
 
     @Override

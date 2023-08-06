@@ -35,10 +35,7 @@ import frc.robot.util.trajectory.RotationSequence;
 import frc.robot.util.trajectory.Waypoint;
 
 public class DriveTrajectory extends CommandBase {
-  private static final Alert generatorAlert =
-      new Alert("Failed to generate trajectory, check constants.", AlertType.ERROR);
 
-  private static boolean supportedRobot = true;
   private static double maxVelocityMetersPerSec;
   private static double maxAccelerationMetersPerSec2;
   private static double maxCentripetalAccelerationMetersPerSec2;
@@ -64,7 +61,11 @@ public class DriveTrajectory extends CommandBase {
 
   private Supplier<List<Waypoint>> waypointsSupplier = null;
   private Supplier<List<TrajectoryConstraint>> constraintsSupplier = null;
+
+  
   private CustomTrajectoryGenerator customGenerator = new CustomTrajectoryGenerator();
+  private static final Alert generatorAlert =
+      new Alert("Failed to generate trajectory, check constants.", AlertType.ERROR);
 
   static {
       maxVelocityMetersPerSec = Units.inchesToMeters(160.0);
@@ -115,8 +116,7 @@ public class DriveTrajectory extends CommandBase {
             .setKinematics(new SwerveDriveKinematics(drive.getModuleTranslations()))
             .setStartVelocity(0.0)
             .setEndVelocity(0.0)
-            .addConstraint(
-                new CentripetalAccelerationConstraint(maxCentripetalAccelerationMetersPerSec2))
+            .addConstraint(new CentripetalAccelerationConstraint(maxCentripetalAccelerationMetersPerSec2))
             .addConstraints(constraints);
 
     // Generate trajectory
@@ -124,7 +124,7 @@ public class DriveTrajectory extends CommandBase {
     try {
       customGenerator.generate(config, waypoints);
     } catch (TrajectoryGenerationException exception) {
-      if (supportedRobot && alertOnFail) {
+      if (alertOnFail) {
         generatorAlert.set(true);
         DriverStation.reportError("Failed to generate trajectory.", true);
       }
@@ -160,10 +160,8 @@ public class DriveTrajectory extends CommandBase {
   @Override
   public void execute() {
     // Update from tunable numbers
-    if (driveKd.hasChanged(hashCode())
-        || driveKp.hasChanged(hashCode())
-        || turnKd.hasChanged(hashCode())
-        || turnKp.hasChanged(hashCode())) {
+    if (driveKd.hasChanged(hashCode()) || driveKp.hasChanged(hashCode())
+        || turnKd.hasChanged(hashCode()) || turnKp.hasChanged(hashCode())) {
       xController.setP(driveKp.get());
       xController.setD(driveKd.get());
       yController.setP(driveKp.get());
@@ -178,10 +176,8 @@ public class DriveTrajectory extends CommandBase {
     }
 
     // Get setpoint
-    Trajectory.State driveState =
-        AllianceFlipUtil.apply(customGenerator.getDriveTrajectory().sample(timer.get()));
-    RotationSequence.State holonomicRotationState =
-        AllianceFlipUtil.apply(customGenerator.getHolonomicRotationSequence().sample(timer.get()));
+    Trajectory.State driveState = AllianceFlipUtil.apply(customGenerator.getDriveTrajectory().sample(timer.get()));
+    RotationSequence.State holonomicRotationState = AllianceFlipUtil.apply(customGenerator.getHolonomicRotationSequence().sample(timer.get()));
     Logger.getInstance()
         .recordOutput(
             "Odometry/TrajectorySetpoint",
@@ -192,9 +188,7 @@ public class DriveTrajectory extends CommandBase {
             });
 
     // Calculate velocity
-    ChassisSpeeds nextDriveState =
-        customHolonomicDriveController.calculate(
-            drive.getPose(), driveState, holonomicRotationState);
+    ChassisSpeeds nextDriveState = customHolonomicDriveController.calculate(drive.getPose(), driveState, holonomicRotationState);
     drive.driveVelocity(nextDriveState);
   }
 

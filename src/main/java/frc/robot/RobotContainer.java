@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DriveConstants.DriveModulePosition;
 import frc.robot.commands.BasicDriveAutos;
+import frc.robot.commands.DriveInSquare;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
@@ -67,7 +68,7 @@ public class RobotContainer {
           new ModuleIOFalcon500(DriveModulePosition.BACK_LEFT),
           new ModuleIOFalcon500(DriveModulePosition.BACK_RIGHT));
 
-          candleSystem = new CANdleSystem(driveController.getHID());
+          candleSystem = new CANdleSystem();
         break;
 
       // Sim robot, instantiate physics sim IO implementations
@@ -93,16 +94,6 @@ public class RobotContainer {
           candleSystem = null;
     }
 
-    // Instantiate missing subsystems
-    // if (drive == null) {
-    //   drive = new Drive(
-    //           new GyroIO() {},
-    //           new ModuleIO() {},
-    //           new ModuleIO() {},
-    //           new ModuleIO() {},
-    //           new ModuleIO() {});
-    // }
-
     // Configure the button bindings
     configureButtonBindings();
     
@@ -126,9 +117,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     if (RobotBase.isReal()) {
-      driveController.x().onTrue(new InstantCommand(candleSystem::setColors, candleSystem));
-      driveController.y().onTrue(new InstantCommand(candleSystem::incrementAnimation, candleSystem));
-      driveController.b().onTrue(new InstantCommand(candleSystem::decrementAnimation, candleSystem));
+      driveController.x().onTrue(new InstantCommand(candleSystem::setColors, candleSystem).ignoringDisable(true));
+      driveController.y().onTrue(new InstantCommand(candleSystem::incrementAnimation, candleSystem).ignoringDisable(true));
+      driveController.b().onTrue(new InstantCommand(candleSystem::decrementAnimation, candleSystem).ignoringDisable(true));
     }
   }
 
@@ -150,6 +141,8 @@ public class RobotContainer {
       // Set up auto routines
       autoChooser.addDefaultOption("Do Nothing",
           new AutoRoutine(AutoPosition.ORIGIN, new InstantCommand()));
+
+      autoChooser.addOption("Drive In Square", new AutoRoutine(AutoPosition.ORIGIN, new DriveInSquare(drive)));
 
       autoChooser.addOption("Drive Forward", new AutoRoutine(AutoPosition.ORIGIN, BasicDriveAutos.driveForwardAuto(drive)));
       autoChooser.addOption("Drive Backward", new AutoRoutine(AutoPosition.ORIGIN, BasicDriveAutos.driveBackwardAuto(drive)));

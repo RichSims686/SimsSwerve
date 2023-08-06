@@ -16,7 +16,7 @@ public final class Constants {
         REAL, SIM, REPLAY
     }
 
-    public static final Mode mode = Mode.SIM;
+    public static final Mode mode = Mode.REAL;
     public static final boolean tuningMode = true;    
 
     public static final double loopPeriodSecs = 0.02;
