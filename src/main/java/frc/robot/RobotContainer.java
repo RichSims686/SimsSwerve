@@ -18,6 +18,7 @@ import frc.robot.commands.BasicDriveAutos;
 import frc.robot.commands.DriveInSquare;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.DriveWithJoysticksCardinal;
+import frc.robot.commands.DriveWithPreciseFlick;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.robot.subsystems.drive.Drive;
@@ -136,13 +137,26 @@ public class RobotContainer {
     //     () -> driveController.getHID().getLeftBumper()    // precision speed
     //     ));
 
-    drive.setDefaultCommand(new DriveWithJoysticksCardinal(
-        drive,
-        () -> -driveController.getLeftY(),    // forward is field +x axis
-        () -> -driveController.getLeftX(),    //   right is field +y axis
-        () -> Drive.getCardinalDirectionFromJoystick(() -> -driveController.getRightX(), () -> -driveController.getRightY()),   // turn axis
-        () -> driveController.getHID().getLeftBumper()    // precision speed
-        ));
+    // drive.setDefaultCommand(new DriveWithJoysticksCardinal(
+    //     drive,
+    //     () -> -driveController.getLeftY(),    // forward is field +x axis
+    //     () -> -driveController.getLeftX(),    //   right is field +y axis
+    //     () -> Drive.getCardinalDirectionFromJoystick(() -> -driveController.getRightX(), () -> -driveController.getRightY()),   // turn axis
+    //     () -> driveController.getHID().getLeftBumper()    // precision speed
+    //     )
+    //   );
+    drive.setDefaultCommand(new DriveWithPreciseFlick(
+      drive, 
+      () -> -driveController.getLeftY(), 
+      () -> -driveController.getLeftX(), 
+      DriveWithPreciseFlick.headingFromJoystick(
+        () -> -driveController.getRightX(), 
+        () -> -driveController.getRightY(), 
+        15, 
+        0.5
+      ), 
+      () -> driveController.getHID().getLeftBumper())
+    );
   }
 
 
