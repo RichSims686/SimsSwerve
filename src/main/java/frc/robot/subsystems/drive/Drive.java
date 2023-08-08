@@ -7,6 +7,9 @@
 
 package frc.robot.subsystems.drive;
 
+import java.util.Optional;
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -18,6 +21,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -347,4 +351,66 @@ public class Drive extends SubsystemBase {
     }
     return driveVelocityAverage / DriveConstants.numDriveModules;
   }
+
+  // field-oriented directions from driver's perspective
+  public static enum CardinalDirection {
+    FORWARD(Units.degreesToRadians(0)),
+    BACKWARD(Units.degreesToRadians(180)),
+    LEFT(Units.degreesToRadians(90)),
+    RIGHT(Units.degreesToRadians(270));
+
+    private final double angleRadians;
+
+    private CardinalDirection(double angleRadians) {
+      this.angleRadians = angleRadians;
+    }
+
+    public double getAngleRadians() {
+      return angleRadians;
+    }
+  }
+
+  private static final double cardinalStickThreshold = 0.5;   // turn stick must exceed this threshold to change desired heading
+
+  // use joystick to select cardinal direction
+  public static Optional<CardinalDirection> getCardinalDirectionFromJoystick(Supplier<Double> xSupplier, Supplier<Double> ySupplier) {
+    
+    Optional<CardinalDirection> direction = Optional.empty();
+
+    double xStick = xSupplier.get();
+    double yStick = ySupplier.get();
+
+    double xAbs = Math.abs(xStick);
+    double yAbs = Math.abs(yStick);
+
+    double maxStick = Math.max(xAbs, yAbs);
+    if (maxStick > cardinalStickThreshold) {
+      if (Math.abs(xStick) > Math.abs(yStick)) {
+        direction = Optional.of(xStick > 0 ? CardinalDirection.LEFT : CardinalDirection.RIGHT);
+      } else {
+        direction = Optional.of(yStick > 0 ? CardinalDirection.FORWARD : CardinalDirection.BACKWARD);
+      }
+    }
+    return direction;
+  }
+
+  
+  // use joystick to select cardinal direction
+  public static Optional<CardinalDirection> getCardinalDirectionFromButtons(
+        Supplier<Boolean> forwardSupplier, Supplier<Boolean> backwardSupplier, 
+        Supplier<Boolean> leftSupplier, Supplier<Boolean> rightSupplier) {
+
+    Optional<CardinalDirection> direction = Optional.empty();
+
+    if (forwardSupplier.get()) {
+      direction = Optional.of(CardinalDirection.FORWARD);
+    } else if (backwardSupplier.get()) {
+      direction = Optional.of(CardinalDirection.BACKWARD);
+    } else if (leftSupplier.get()) {
+      direction = Optional.of(CardinalDirection.LEFT);
+    } else if (rightSupplier.get()) {
+      direction = Optional.of(CardinalDirection.RIGHT);
+    }
+    return direction;
+  }    
 }

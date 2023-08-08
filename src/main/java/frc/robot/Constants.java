@@ -16,7 +16,8 @@ public final class Constants {
         REAL, SIM, REPLAY
     }
 
-    public static final Mode mode = Mode.REAL;
+    public static final Mode mode = Mode.REAL
+    ;
     public static final boolean tuningMode = true;    
 
     public static final double loopPeriodSecs = 0.02;
@@ -105,8 +106,8 @@ public final class Constants {
         public static final double driveSnapKd = 0;
 
 
-        public static final double maxDriveSpeed = 2;
-        public static final double maxTurnRate = 2 * Math.PI;
+        public static final double maxDriveSpeed = 3;
+        public static final double maxTurnRate = 4 * Math.PI;
 
         public static final double driveJoystickDeadbandPercent = 0.12;
         public static final double driveMaxJerk = 200.0;

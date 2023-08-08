@@ -19,14 +19,20 @@ import frc.robot.util.trajectory.Waypoint;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class DriveInSquare extends SequentialCommandGroup {
 
-  public static double xDistanceMeters = Units.feetToMeters(5.0); 
-  public static double yDistanceMeters = Units.feetToMeters(5.0); 
+  // public static double xDistanceMeters = Units.feetToMeters(5.0); 
+  // public static double yDistanceMeters = Units.feetToMeters(5.0); 
+  public static double xDistanceMeters = Units.feetToMeters(12.0); 
+  public static double yDistanceMeters = Units.feetToMeters(9.0); 
   public static int numRepeat = 4;
 
+  // public static Pose2d position1 = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
+  // public static Pose2d position2 = new Pose2d(xDistanceMeters, 0.0, Rotation2d.fromDegrees(-90));
+  // public static Pose2d position3 = new Pose2d(xDistanceMeters, yDistanceMeters, Rotation2d.fromDegrees(180));
+  // public static Pose2d position4 = new Pose2d(0.0, yDistanceMeters, Rotation2d.fromDegrees(90));
   public static Pose2d position1 = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
-  public static Pose2d position2 = new Pose2d(xDistanceMeters, 0.0, Rotation2d.fromDegrees(-90));
-  public static Pose2d position3 = new Pose2d(xDistanceMeters, yDistanceMeters, Rotation2d.fromDegrees(180));
-  public static Pose2d position4 = new Pose2d(0.0, yDistanceMeters, Rotation2d.fromDegrees(90));
+  public static Pose2d position2 = new Pose2d(xDistanceMeters, 0.0, Rotation2d.fromDegrees(0));
+  public static Pose2d position3 = new Pose2d(xDistanceMeters, yDistanceMeters, Rotation2d.fromDegrees(0));
+  public static Pose2d position4 = new Pose2d(0.0, yDistanceMeters, Rotation2d.fromDegrees(0));
 
   /** Creates a new ThreeCargoAuto. */
   public DriveInSquare(Drive drive) {

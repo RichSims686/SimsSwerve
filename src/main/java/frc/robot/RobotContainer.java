@@ -17,6 +17,7 @@ import frc.robot.Constants.DriveConstants.DriveModulePosition;
 import frc.robot.commands.BasicDriveAutos;
 import frc.robot.commands.DriveInSquare;
 import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.commands.DriveWithJoysticksCardinal;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.robot.subsystems.drive.Drive;
@@ -126,12 +127,20 @@ public class RobotContainer {
 
   private void configureSubsystems() {
 
-    drive.setDefaultCommand(new DriveWithJoysticks(
+    // drive.setDefaultCommand(new DriveWithJoysticks(
+    //     drive,
+    //     () -> -driveController.getLeftY(),    // forward is field +x axis
+    //     () -> -driveController.getLeftX(),    //   right is field +y axis
+    //     () -> -driveController.getRightX(),   // turn axis
+    //     () -> !driveController.getHID().getRightBumper(),  // field relative controls
+    //     () -> driveController.getHID().getLeftBumper()    // precision speed
+    //     ));
+
+    drive.setDefaultCommand(new DriveWithJoysticksCardinal(
         drive,
         () -> -driveController.getLeftY(),    // forward is field +x axis
         () -> -driveController.getLeftX(),    //   right is field +y axis
-        () -> -driveController.getRightX(),   // turn axis
-        () -> !driveController.getHID().getRightBumper(),  // field relative controls
+        () -> Drive.getCardinalDirectionFromJoystick(() -> -driveController.getRightX(), () -> -driveController.getRightY()),   // turn axis
         () -> driveController.getHID().getLeftBumper()    // precision speed
         ));
   }
