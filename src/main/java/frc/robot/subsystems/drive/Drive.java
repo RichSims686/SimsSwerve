@@ -8,7 +8,8 @@
 package frc.robot.subsystems.drive;
 
 import java.util.Optional;
-import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -373,12 +374,12 @@ public class Drive extends SubsystemBase {
   private static final double cardinalStickThreshold = 0.5;   // turn stick must exceed this threshold to change desired heading
 
   // use joystick to select cardinal direction
-  public static Optional<CardinalDirection> getCardinalDirectionFromJoystick(Supplier<Double> xSupplier, Supplier<Double> ySupplier) {
+  public static Optional<CardinalDirection> getCardinalDirectionFromJoystick(DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
     
     Optional<CardinalDirection> direction = Optional.empty();
 
-    double xStick = xSupplier.get();
-    double yStick = ySupplier.get();
+    double xStick = xSupplier.getAsDouble();
+    double yStick = ySupplier.getAsDouble();
 
     double xAbs = Math.abs(xStick);
     double yAbs = Math.abs(yStick);
@@ -397,18 +398,18 @@ public class Drive extends SubsystemBase {
   
   // use joystick to select cardinal direction
   public static Optional<CardinalDirection> getCardinalDirectionFromButtons(
-        Supplier<Boolean> forwardSupplier, Supplier<Boolean> backwardSupplier, 
-        Supplier<Boolean> leftSupplier, Supplier<Boolean> rightSupplier) {
+        BooleanSupplier forwardSupplier, BooleanSupplier backwardSupplier, 
+        BooleanSupplier leftSupplier, BooleanSupplier rightSupplier) {
 
     Optional<CardinalDirection> direction = Optional.empty();
 
-    if (forwardSupplier.get()) {
+    if (forwardSupplier.getAsBoolean()) {
       direction = Optional.of(CardinalDirection.FORWARD);
-    } else if (backwardSupplier.get()) {
+    } else if (backwardSupplier.getAsBoolean()) {
       direction = Optional.of(CardinalDirection.BACKWARD);
-    } else if (leftSupplier.get()) {
+    } else if (leftSupplier.getAsBoolean()) {
       direction = Optional.of(CardinalDirection.LEFT);
-    } else if (rightSupplier.get()) {
+    } else if (rightSupplier.getAsBoolean()) {
       direction = Optional.of(CardinalDirection.RIGHT);
     }
     return direction;

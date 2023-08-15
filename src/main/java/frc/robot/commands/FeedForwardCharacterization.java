@@ -7,14 +7,15 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.util.PolynomialRegression;
 
 public class FeedForwardCharacterization extends CommandBase {
@@ -28,8 +29,8 @@ public class FeedForwardCharacterization extends CommandBase {
   private final FeedForwardCharacterizationData dataSecondary;
   private final Consumer<Double> voltageConsumerSimple;
   private final BiConsumer<Double, Double> voltageConsumerDrive;
-  private final Supplier<Double> velocitySupplierPrimary;
-  private final Supplier<Double> velocitySupplierSecondary;
+  private final DoubleSupplier velocitySupplierPrimary;
+  private final DoubleSupplier velocitySupplierSecondary;
 
   private final Timer timer = new Timer();
 
@@ -40,8 +41,8 @@ public class FeedForwardCharacterization extends CommandBase {
       FeedForwardCharacterizationData leftData,
       FeedForwardCharacterizationData rightData,
       BiConsumer<Double, Double> voltageConsumer,
-      Supplier<Double> leftVelocitySupplier,
-      Supplier<Double> rightVelocitySupplier) {
+      DoubleSupplier leftVelocitySupplier,
+      DoubleSupplier rightVelocitySupplier) {
     addRequirements(drive);
     this.forwards = forwards;
     this.isDrive = true;
@@ -59,7 +60,7 @@ public class FeedForwardCharacterization extends CommandBase {
       boolean forwards,
       FeedForwardCharacterizationData data,
       Consumer<Double> voltageConsumer,
-      Supplier<Double> velocitySupplier) {
+      DoubleSupplier velocitySupplier) {
     addRequirements(subsystem);
     this.forwards = forwards;
     this.isDrive = false;
@@ -94,9 +95,9 @@ public class FeedForwardCharacterization extends CommandBase {
       } else {
         voltageConsumerSimple.accept(voltage);
       }
-      dataPrimary.add(velocitySupplierPrimary.get(), voltage);
+      dataPrimary.add(velocitySupplierPrimary.getAsDouble(), voltage);
       if (isDrive) {
-        dataSecondary.add(velocitySupplierSecondary.get(), voltage);
+        dataSecondary.add(velocitySupplierSecondary.getAsDouble(), voltage);
       }
     }
   }

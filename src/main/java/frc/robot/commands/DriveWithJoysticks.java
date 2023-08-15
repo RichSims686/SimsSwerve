@@ -7,7 +7,8 @@
 
 package frc.robot.commands;
 
-import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,15 +22,15 @@ import frc.robot.subsystems.drive.Drive;
 public class DriveWithJoysticks extends CommandBase {
 
   private final Drive drive;
-  private final Supplier<Double> xSupplier; // x-axis translation
-  private final Supplier<Double> ySupplier; // y-axis translation
-  private final Supplier<Double> turnSupplier; // rotation
-  private final Supplier<Boolean> precisionSupplier; // slow-down for precision positioning
-  private final Supplier<Boolean> robotRelativeOverride; // robot-relative instead of field-relative
+  private final DoubleSupplier xSupplier; // x-axis translation
+  private final DoubleSupplier ySupplier; // y-axis translation
+  private final DoubleSupplier turnSupplier; // rotation
+  private final BooleanSupplier precisionSupplier; // slow-down for precision positioning
+  private final BooleanSupplier robotRelativeOverride; // robot-relative instead of field-relative
 
   /** Creates a new DriveWithJoysticks. */
-  public DriveWithJoysticks(Drive drive, Supplier<Double> xSupplier, Supplier<Double> ySupplier, Supplier<Double> turnSupplier,
-                            Supplier<Boolean> robotRelativeOverride, Supplier<Boolean> precisionSupplier) {
+  public DriveWithJoysticks(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier turnSupplier,
+                            BooleanSupplier robotRelativeOverride, BooleanSupplier precisionSupplier) {
     addRequirements(drive);
     this.drive = drive;
     this.xSupplier = xSupplier;
@@ -48,16 +49,16 @@ public class DriveWithJoysticks extends CommandBase {
     boolean squareInputs = true;
 
     // Get values from double suppliers
-    double xTranslationInput = processJoystickInputs(xSupplier.get(), squareInputs);
-    double yTranslationInput = processJoystickInputs(ySupplier.get(), squareInputs);
-    double turnInput = processJoystickInputs(turnSupplier.get(), squareInputs);
+    double xTranslationInput = processJoystickInputs(xSupplier.getAsDouble(), squareInputs);
+    double yTranslationInput = processJoystickInputs(ySupplier.getAsDouble(), squareInputs);
+    double turnInput = processJoystickInputs(turnSupplier.getAsDouble(), squareInputs);
 
     // Get direction and magnitude of linear axes
     double linearMagnitude = Math.hypot(xTranslationInput, yTranslationInput);
     Rotation2d linearDirection = new Rotation2d(xTranslationInput, yTranslationInput);
 
     // Apply speed limits
-    if (precisionSupplier.get()) {
+    if (precisionSupplier.getAsBoolean()) {
       linearMagnitude *= DriveConstants.precisionLinearMultiplier;
       turnInput *= DriveConstants.precisionTurnMulitiplier;
     }
@@ -73,7 +74,7 @@ public class DriveWithJoysticks extends CommandBase {
     // field relative controls
     ChassisSpeeds speeds = new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
 
-    if (robotRelativeOverride.get()) {
+    if (robotRelativeOverride.getAsBoolean()) {
       // robot relative controls
       var driveRotation = drive.getRotation(); // angle from alliance wall normal
       if (DriverStation.getAlliance() == Alliance.Red) {

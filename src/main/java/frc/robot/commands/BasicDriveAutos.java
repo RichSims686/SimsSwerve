@@ -12,7 +12,7 @@ import frc.robot.subsystems.drive.Drive;
 
 public class BasicDriveAutos {
 
-    private static final double defaultDistanceMeters = 2;
+    private static final double defaultDistanceMeters = 5;//2;  
     private static final double defaultTurnRadians = Units.rotationsToRadians(5.0);
     private static final double timeToMaxSpeed = 1.0;
 

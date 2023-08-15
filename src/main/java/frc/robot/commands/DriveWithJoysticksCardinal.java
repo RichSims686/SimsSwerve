@@ -8,6 +8,8 @@
 package frc.robot.commands;
 
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
@@ -26,10 +28,10 @@ import frc.robot.subsystems.drive.Drive.CardinalDirection;
 public class DriveWithJoysticksCardinal extends CommandBase {
 
   private final Drive drive;
-  private final Supplier<Double> xSupplier; // x-axis translation
-  private final Supplier<Double> ySupplier; // y-axis translation
+  private final DoubleSupplier xSupplier; // x-axis translation
+  private final DoubleSupplier ySupplier; // y-axis translation
   private final Supplier<Optional<CardinalDirection>> cardinalDirectionSupplier; // rotation
-  private final Supplier<Boolean> precisionSupplier; // slow-down for precision positioning
+  private final BooleanSupplier precisionSupplier; // slow-down for precision positioning
 
   private double desiredHeadingRadians;
   private final double headingKp = 4 / DriveConstants.maxTurnRate;
@@ -39,9 +41,9 @@ public class DriveWithJoysticksCardinal extends CommandBase {
   private final PIDController headingPID;
 
   /** Creates a new DriveWithJoysticks. */
-  public DriveWithJoysticksCardinal(Drive drive, Supplier<Double> xSupplier, Supplier<Double> ySupplier,
+  public DriveWithJoysticksCardinal(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier,
                                     Supplier<Optional<CardinalDirection>> cardinalDirectionSupplier,
-                                    Supplier<Boolean> precisionSupplier) {
+                                    BooleanSupplier precisionSupplier) {
     addRequirements(drive);
     this.drive = drive;
     this.xSupplier = xSupplier;
@@ -64,8 +66,8 @@ public class DriveWithJoysticksCardinal extends CommandBase {
     boolean squareInputs = true;
 
     // Get values from double suppliers
-    double xTranslationInput = processJoystickInputs(xSupplier.get(), squareInputs);
-    double yTranslationInput = processJoystickInputs(ySupplier.get(), squareInputs);
+    double xTranslationInput = processJoystickInputs(xSupplier.getAsDouble(), squareInputs);
+    double yTranslationInput = processJoystickInputs(ySupplier.getAsDouble(), squareInputs);
     
     // update desired direction
     Optional<CardinalDirection> cardinalInput = cardinalDirectionSupplier.get();
@@ -83,7 +85,7 @@ public class DriveWithJoysticksCardinal extends CommandBase {
     Rotation2d linearDirection = new Rotation2d(xTranslationInput, yTranslationInput);
 
     // Apply speed limits
-    if (precisionSupplier.get()) {
+    if (precisionSupplier.getAsBoolean()) {
       linearMagnitude *= DriveConstants.precisionLinearMultiplier;
       turnInput *= DriveConstants.precisionTurnMulitiplier;
     }

@@ -83,8 +83,7 @@ public class Module {
     var optimizedState = SwerveModuleState.optimize(state, getAngle());
 
     // Run turn controller
-    io.setTurnVoltage(
-        turnFeedback.calculate(getAngle().getRadians(), optimizedState.angle.getRadians()));
+    io.setTurnVoltage(turnFeedback.calculate(getAngle().getRadians(), optimizedState.angle.getRadians()));
 
     // Update velocity based on turn error
     optimizedState.speedMetersPerSecond *= Math.cos(turnFeedback.getPositionError());
@@ -169,6 +168,8 @@ public class Module {
   /** Zeros module encoders. */
   public void zeroEncoders() {
     io.zeroEncoders();
+    // need to also reset prevModulePosition because drive is driven by deltas in position
+    prevModulePosition = getPosition();
   }
 
 }

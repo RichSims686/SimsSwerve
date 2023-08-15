@@ -17,12 +17,12 @@ import frc.robot.util.trajectory.Waypoint;
 // NOTE: Consider using this command inline, rather than writing a subclass. For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class DriveInSquare extends SequentialCommandGroup {
+public class DriveStraightTrajectory extends SequentialCommandGroup {
 
   // public static double xDistanceMeters = Units.feetToMeters(5.0); 
   // public static double yDistanceMeters = Units.feetToMeters(5.0); 
-  public static double xDistanceMeters = Units.feetToMeters(12.0); 
-  public static double yDistanceMeters = Units.feetToMeters(9.0); 
+  public static double xDistanceMeters = Units.feetToMeters(20.0); 
+  public static double yDistanceMeters = Units.feetToMeters(0.0); 
   public static int numRepeat = 1;
 
   // public static Pose2d position1 = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
@@ -31,10 +31,10 @@ public class DriveInSquare extends SequentialCommandGroup {
   // public static Pose2d position4 = new Pose2d(0.0, yDistanceMeters, Rotation2d.fromDegrees(90));
   public static Pose2d position1 = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
   public static Pose2d position2 = new Pose2d(xDistanceMeters, 0.0, Rotation2d.fromDegrees(0));
-  public static Pose2d position3 = new Pose2d(xDistanceMeters, yDistanceMeters, Rotation2d.fromDegrees(0));
-  public static Pose2d position4 = new Pose2d(0.0, yDistanceMeters, Rotation2d.fromDegrees(0));
+  // public static Pose2d position3 = new Pose2d(xDistanceMeters, yDistanceMeters, Rotation2d.fromDegrees(0));
+  // public static Pose2d position4 = new Pose2d(0.0, yDistanceMeters, Rotation2d.fromDegrees(0));
 
-  public DriveInSquare(Drive drive) {
+  public DriveStraightTrajectory(Drive drive) {
 
     for (int k=0; k<numRepeat; k++) {
 
@@ -42,10 +42,7 @@ public class DriveInSquare extends SequentialCommandGroup {
             new DriveTrajectory(drive,
             List.of(
                 Waypoint.fromHolonomicPose(position1),
-                Waypoint.fromHolonomicPose(position2),
-                Waypoint.fromHolonomicPose(position3),
-                Waypoint.fromHolonomicPose(position4),
-                Waypoint.fromHolonomicPose(position1))));
+                Waypoint.fromHolonomicPose(position2))));
     }
   }
 }

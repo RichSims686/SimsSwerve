@@ -1,0 +1,181 @@
+{
+  "version": "2.2.2",
+  "layout": [
+    {
+      "type": 1,
+      "legends": {
+        "left": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/RealOutputs/Odometry/Robot/0",
+              "color": "#e5b31b",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/Odometry/Robot/1",
+              "color": "#2b66a2",
+              "show": true
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/Odometry/Robot/2",
+              "color": "#af2437",
+              "show": true
+            },
+            {
+              "key": "/RealOutputs/Odometry/Robot/0",
+              "color": "#80588e",
+              "show": true
+            },
+            {
+              "key": "/RealOutputs/Odometry/Robot/1",
+              "color": "#e48b32",
+              "show": true
+            },
+            {
+              "key": "/RealOutputs/Odometry/Robot/2",
+              "color": "#aacaee",
+              "show": true
+            }
+          ]
+        },
+        "discrete": {
+          "fields": []
+        },
+        "right": {
+          "lockedRange": null,
+          "unitConversion": {
+            "type": null,
+            "factor": 1
+          },
+          "fields": [
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/0",
+              "color": "#3b875a",
+              "show": false
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/1",
+              "color": "#d993aa",
+              "show": false
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/2",
+              "color": "#eb987e",
+              "show": false
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/3",
+              "color": "#5d4f92",
+              "show": false
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/4",
+              "color": "#a64b6b",
+              "show": false
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/5",
+              "color": "#dbd345",
+              "show": false
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/6",
+              "color": "#7e331f",
+              "show": false
+            },
+            {
+              "key": "/AdvantageKit/RealOutputs/SwerveStates/Measured/7",
+              "color": "#96b637",
+              "show": false
+            }
+          ]
+        }
+      },
+      "title": "Line Graph"
+    },
+    {
+      "type": 5,
+      "fields": [],
+      "listFields": [
+        [
+          {
+            "type": "Robot",
+            "key": "/AdvantageKit/RealOutputs/Odometry/Robot",
+            "fieldTypeIndex": 0
+          },
+          {
+            "type": "Ghost",
+            "key": "/RealOutputs/Odometry/Robot",
+            "fieldTypeIndex": 0
+          }
+        ]
+      ],
+      "options": {
+        "game": "2023",
+        "unitDistance": "meters",
+        "unitRotation": "radians",
+        "origin": "right",
+        "size": 0.75,
+        "allianceBumpers": "auto",
+        "allianceOrigin": "blue",
+        "orientation": "blue left, red right"
+      },
+      "title": "Odometry"
+    },
+    {
+      "type": 3,
+      "field": "/AdvantageKit/RealOutputs/Console",
+      "title": "Console"
+    },
+    {
+      "type": 6,
+      "fields": [],
+      "listFields": [
+        [],
+        [
+          {
+            "type": "Robot",
+            "key": "/AdvantageKit/RealOutputs/Odometry/Robot",
+            "fieldTypeIndex": 0
+          },
+          {
+            "type": "Ghost",
+            "key": "/RealOutputs/Odometry/Robot",
+            "fieldTypeIndex": 0
+          }
+        ]
+      ],
+      "options": {
+        "field": "Evergreen",
+        "alliance": "auto",
+        "robot": "Duck Bot",
+        "unitDistance": "meters",
+        "unitRotation": "radians"
+      },
+      "title": "3D Field"
+    },
+    {
+      "type": 9,
+      "fields": [
+        "/RealOutputs/SwerveStates/Measured",
+        "/RealOutputs/SwerveStates/Setpoints",
+        "/Drive/Gyro/YawPositionRad"
+      ],
+      "listFields": [],
+      "options": {
+        "maxSpeed": 4.5,
+        "rotationUnits": "radians",
+        "arrangement": "0,1,2,3",
+        "sizeLeftRight": 0.31,
+        "sizeFrontBack": 0.31,
+        "forwardDirection": "up"
+      },
+      "title": "Swerve"
+    }
+  ]
+}

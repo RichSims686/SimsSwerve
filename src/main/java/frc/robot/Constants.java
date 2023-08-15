@@ -83,6 +83,7 @@ public final class Constants {
             0.177490,  // back right
         };
 
+        // motor direction to drive 'forward' (cancoders at angles given in cancoderOffsetRotations)
         public static final InvertedValue[] driveInverted = {
             InvertedValue.CounterClockwise_Positive,    // front left
             InvertedValue.Clockwise_Positive,           // front right
@@ -95,7 +96,7 @@ public final class Constants {
                 new Translation2d(+trackWidthY / 2.0, +trackWidthX / 2.0), //front left
                 new Translation2d(+trackWidthY / 2.0, -trackWidthX / 2.0), //front right
                 new Translation2d(-trackWidthY / 2.0, +trackWidthX / 2.0), //rear left
-                new Translation2d(-trackWidthY / 2.0, -trackWidthX / 2.0) //rear right
+                new Translation2d(-trackWidthY / 2.0, -trackWidthX / 2.0)  //rear right
         );
 
         public static final double[] driveRealKps = {0.7, 0.4, 0.7, 0.7};
@@ -106,7 +107,7 @@ public final class Constants {
         public static final double driveSnapKd = 0;
 
 
-        public static final double maxDriveSpeed = 3;
+        public static final double maxDriveSpeed = 2;
         public static final double maxTurnRate = 4 * Math.PI;
 
         public static final double driveJoystickDeadbandPercent = 0.12;

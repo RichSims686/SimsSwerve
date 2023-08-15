@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DriveConstants.DriveModulePosition;
 import frc.robot.commands.BasicDriveAutos;
 import frc.robot.commands.DriveInSquare;
-import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.commands.DriveStraightTrajectory;
 import frc.robot.commands.DriveWithJoysticksCardinal;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
@@ -151,6 +151,7 @@ public class RobotContainer {
       autoChooser.addDefaultOption("Do Nothing",
           new AutoRoutine(AutoPosition.ORIGIN, new InstantCommand()));
 
+      autoChooser.addOption("DriveStraightTraj", new AutoRoutine(AutoPosition.ORIGIN, new DriveStraightTrajectory(drive)));
       autoChooser.addOption("Drive In Square", new AutoRoutine(AutoPosition.ORIGIN, new DriveInSquare(drive)));
 
       autoChooser.addOption("Drive Forward", new AutoRoutine(AutoPosition.ORIGIN, BasicDriveAutos.driveForwardAuto(drive)));
