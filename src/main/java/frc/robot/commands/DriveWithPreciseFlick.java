@@ -130,7 +130,7 @@ public class DriveWithPreciseFlick extends CommandBase {
 		if(Math.abs(value) > deadband) {
 		scaledValue = (Math.abs(value) - deadband) / (1 - deadband);
 			if(squareInputs) {
-				scaledValue = Math.copySign(scaledValue * scaledValue, value);
+				scaledValue = Math.copySign(scaledValue * scaledValue * scaledValue, value);
 			} else {
 				scaledValue = Math.copySign(scaledValue, value);
 			}

@@ -8,7 +8,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -17,7 +16,6 @@ import frc.robot.Constants.DriveConstants.DriveModulePosition;
 import frc.robot.commands.BasicDriveAutos;
 import frc.robot.commands.DriveInSquare;
 import frc.robot.commands.DriveStraightTrajectory;
-import frc.robot.commands.DriveWithJoysticksCardinal;
 import frc.robot.commands.DriveWithPreciseFlick;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
@@ -27,8 +25,7 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOFalcon500;
 import frc.robot.subsystems.drive.ModuleIOSim;
-import frc.robot.subsystems.leds.CANdleSystem;
-import frc.robot.subsystems.leds.CANdleSystem.AnimationTypes;
+import frc.robot.subsystems.leds.LEDFrameworkSystem;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
 
@@ -47,7 +44,7 @@ public class RobotContainer {
   private final CommandXboxController driveController = new CommandXboxController(0);
 
   // LEDs
-  private final CANdleSystem candleSystem;
+  private final LEDFrameworkSystem candleSystem;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<AutoRoutine> autoChooser = new LoggedDashboardChooser<>("Auto Routine");
@@ -70,7 +67,7 @@ public class RobotContainer {
           new ModuleIOFalcon500(DriveModulePosition.BACK_LEFT),
           new ModuleIOFalcon500(DriveModulePosition.BACK_RIGHT));
 
-          candleSystem = new CANdleSystem();
+          candleSystem = new LEDFrameworkSystem();
         break;
 
       // Sim robot, instantiate physics sim IO implementations
@@ -118,11 +115,11 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    if (RobotBase.isReal()) {
-      driveController.x().onTrue(new InstantCommand(candleSystem::setColors, candleSystem).ignoringDisable(true));
-      driveController.y().onTrue(new InstantCommand(candleSystem::incrementAnimation, candleSystem).ignoringDisable(true));
-      driveController.b().onTrue(new InstantCommand(candleSystem::decrementAnimation, candleSystem).ignoringDisable(true));
-    }
+    // if (RobotBase.isReal()) {
+    //   driveController.x().onTrue(new InstantCommand(candleSystem::setColors, candleSystem).ignoringDisable(true));
+    //   driveController.y().onTrue(new InstantCommand(candleSystem::incrementAnimation, candleSystem).ignoringDisable(true));
+    //   driveController.b().onTrue(new InstantCommand(candleSystem::decrementAnimation, candleSystem).ignoringDisable(true));
+    // }
   }
 
 
@@ -226,9 +223,9 @@ public class RobotContainer {
   }
 
   public void disabledInit() {
-    if (RobotBase.isReal()) {
-      candleSystem.changeAnimation(AnimationTypes.Rainbow);
-    }
+    // if (RobotBase.isReal()) {
+    //   candleSystem.changeAnimation(AnimationTypes.Rainbow);
+    // }
   }
   
   public void disabledPeriodic() {

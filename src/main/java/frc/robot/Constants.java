@@ -107,7 +107,7 @@ public final class Constants {
         public static final double driveSnapKd = 0;
 
 
-        public static final double maxDriveSpeed = 2;
+        public static final double maxDriveSpeed = 4;
         public static final double maxTurnRate = 4 * Math.PI;
 
         public static final double driveJoystickDeadbandPercent = 0.12;
