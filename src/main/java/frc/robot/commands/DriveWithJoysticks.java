@@ -10,8 +10,8 @@ package frc.robot.commands;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -46,30 +46,20 @@ public class DriveWithJoysticks extends CommandBase {
 
   @Override
   public void execute() {
+
     boolean squareInputs = true;
 
-    // Get values from double suppliers
-    double xTranslationInput = processJoystickInputs(xSupplier.getAsDouble(), squareInputs);
-    double yTranslationInput = processJoystickInputs(ySupplier.getAsDouble(), squareInputs);
-    double turnInput = processJoystickInputs(turnSupplier.getAsDouble(), squareInputs);
-
-    // Get direction and magnitude of linear axes
-    double linearMagnitude = Math.hypot(xTranslationInput, yTranslationInput);
-    Rotation2d linearDirection = new Rotation2d(xTranslationInput, yTranslationInput);
-
-    // Apply speed limits
-    if (precisionSupplier.getAsBoolean()) {
-      linearMagnitude *= DriveConstants.precisionLinearMultiplier;
-      turnInput *= DriveConstants.precisionTurnMulitiplier;
-    }
-
-    // Calcaulate new linear components
-    Translation2d linearVelocity = new Translation2d(linearMagnitude, linearDirection);
+    // process joystick inputs
+    JoystickInputs inputs = new JoystickInputs(xSupplier.getAsDouble(), 
+                                               ySupplier.getAsDouble(),
+                                               turnSupplier.getAsDouble(),
+                                               squareInputs,
+                                               precisionSupplier.getAsBoolean());
 
     // Convert to meters/sec and radians/sec
-    double vxMetersPerSecond = linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec();
-    double vyMetersPerSecond = linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec();
-    double omegaRadiansPerSecond = turnInput * drive.getMaxAngularSpeedRadPerSec();
+    double vxMetersPerSecond = inputs.getX() * drive.getMaxLinearSpeedMetersPerSec();
+    double vyMetersPerSecond = inputs.getY() * drive.getMaxLinearSpeedMetersPerSec();
+    double omegaRadiansPerSecond = inputs.getTurn() * drive.getMaxAngularSpeedRadPerSec();
 
     // field relative controls
     ChassisSpeeds speeds = new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
@@ -86,24 +76,57 @@ public class DriveWithJoysticks extends CommandBase {
     drive.driveVelocity(speeds);
   }
 
-
-  private double processJoystickInputs(double value, boolean squareInputs) {
-    double scaledValue = 0.0;
-    double deadband = DriveConstants.driveJoystickDeadbandPercent;
-    if (Math.abs(value) > deadband) {
-      scaledValue = (Math.abs(value) - deadband) / (1 - deadband);
-      if (squareInputs) {
-        scaledValue = Math.copySign(scaledValue * scaledValue, value);
-      } else {
-        scaledValue = Math.copySign(scaledValue, value);
-      }
-    }
-    return scaledValue;
-  }
-
-
   @Override
   public void end(boolean interrupted) {
     drive.stop();
   }
+
+
+
+  static class JoystickInputs 
+  {
+    double linearMagnitude;
+    double linearAngleRadians;
+    double turn;
+
+    public JoystickInputs(double xIn, double yIn, double turnIn, boolean squareInputs, boolean precisionEnable) {
+      double x = applyDeadband(xIn);
+      double y = applyDeadband(yIn);
+      turn = applyDeadband(turnIn);
+
+      linearMagnitude = Math.hypot(x, y);
+      linearAngleRadians = Math.atan2(y, x);
+
+      // apply non-lineariy for increased sensitivity for smaller movements
+      if (squareInputs) {
+        linearMagnitude = linearMagnitude * linearMagnitude;
+        turn = Math.copySign(turn*turn, turn);
+      }
+
+      // limit to unit circle
+      linearMagnitude = MathUtil.clamp(linearMagnitude, -1.0, +1.0);
+
+      // Apply speed limits        
+      if (precisionEnable) {
+        linearMagnitude *= DriveConstants.precisionLinearMultiplier;
+        turn *= DriveConstants.precisionTurnMulitiplier;
+      }
+    }
+
+    
+    private double applyDeadband(double in) {
+      double out = 0;
+      double deadband = DriveConstants.driveJoystickDeadbandPercent;
+      if (Math.abs(in) > deadband) {
+        out = Math.copySign((Math.abs(in) - deadband) / (1 - deadband), in);
+      }
+      return out;
+    }
+
+    public double getX() { return linearMagnitude * Math.cos(linearAngleRadians); }
+    public double getY() { return linearMagnitude * Math.sin(linearAngleRadians); }
+    public double getTurn() { return turn; }
+  }
+
+
 }

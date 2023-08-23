@@ -15,13 +15,13 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.DriveWithJoysticks.JoystickInputs;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.Drive.CardinalDirection;
 
@@ -63,40 +63,30 @@ public class DriveWithJoysticksCardinal extends CommandBase {
 
   @Override
   public void execute() {
-    boolean squareInputs = true;
-
-    // Get values from double suppliers
-    double xTranslationInput = processJoystickInputs(xSupplier.getAsDouble(), squareInputs);
-    double yTranslationInput = processJoystickInputs(ySupplier.getAsDouble(), squareInputs);
     
     // update desired direction
     Optional<CardinalDirection> cardinalInput = cardinalDirectionSupplier.get();
     if (cardinalInput.isPresent()) {
       desiredHeadingRadians = cardinalInput.get().getAngleRadians();
     }
-
+    
     // PID control of turn
     double turnInput = headingPID.calculate(drive.getPose().getRotation().getRadians(), desiredHeadingRadians);
     turnInput = headingPID.atSetpoint() ? 0 : turnInput;
     turnInput = MathUtil.clamp(turnInput, -1.0, +1.0);
     
-    // Get direction and magnitude of linear axes
-    double linearMagnitude = Math.hypot(xTranslationInput, yTranslationInput);
-    Rotation2d linearDirection = new Rotation2d(xTranslationInput, yTranslationInput);
-
-    // Apply speed limits
-    if (precisionSupplier.getAsBoolean()) {
-      linearMagnitude *= DriveConstants.precisionLinearMultiplier;
-      turnInput *= DriveConstants.precisionTurnMulitiplier;
-    }
-
-    // Calcaulate new linear components
-    Translation2d linearVelocity = new Translation2d(linearMagnitude, linearDirection);
-
+    // process joystick inputs
+    boolean squareInputs = true;
+    JoystickInputs inputs = new JoystickInputs(xSupplier.getAsDouble(), 
+                                               ySupplier.getAsDouble(),
+                                               turnInput,
+                                               squareInputs,
+                                               precisionSupplier.getAsBoolean());
+    
     // Convert to meters/sec and radians/sec
-    double vxMetersPerSecond = linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec();
-    double vyMetersPerSecond = linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec();
-    double omegaRadiansPerSecond = turnInput * drive.getMaxAngularSpeedRadPerSec();
+    double vxMetersPerSecond = inputs.getX() * drive.getMaxLinearSpeedMetersPerSec();
+    double vyMetersPerSecond = inputs.getY() * drive.getMaxLinearSpeedMetersPerSec();
+    double omegaRadiansPerSecond = inputs.getTurn() * drive.getMaxAngularSpeedRadPerSec();  
 
     // field relative controls
     ChassisSpeeds speeds = new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
@@ -109,21 +99,6 @@ public class DriveWithJoysticksCardinal extends CommandBase {
     speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, driveRotation);    
 
     drive.driveVelocity(speeds);
-  }
-
-
-  private double processJoystickInputs(double value, boolean squareInputs) {
-    double scaledValue = 0.0;
-    double deadband = DriveConstants.driveJoystickDeadbandPercent;
-    if (Math.abs(value) > deadband) {
-      scaledValue = (Math.abs(value) - deadband) / (1 - deadband);
-      if (squareInputs) {
-        scaledValue = Math.copySign(scaledValue * scaledValue, value);
-      } else {
-        scaledValue = Math.copySign(scaledValue, value);
-      }
-    }
-    return scaledValue;
   }
 
 
