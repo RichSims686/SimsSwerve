@@ -21,9 +21,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.DriveWithJoysticks.JoystickInputs;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.Drive.CardinalDirection;
+import frc.robot.subsystems.drive.SwerveJoystickInputs;
 
 public class DriveWithJoysticksCardinal extends CommandBase {
 
@@ -77,7 +77,7 @@ public class DriveWithJoysticksCardinal extends CommandBase {
     
     // process joystick inputs
     boolean squareInputs = true;
-    JoystickInputs inputs = new JoystickInputs(xSupplier.getAsDouble(), 
+    SwerveJoystickInputs inputs = new SwerveJoystickInputs(xSupplier.getAsDouble(), 
                                                ySupplier.getAsDouble(),
                                                turnInput,
                                                squareInputs,

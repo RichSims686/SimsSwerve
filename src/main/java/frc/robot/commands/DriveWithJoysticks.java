@@ -10,14 +10,13 @@ package frc.robot.commands;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.SwerveJoystickInputs;
 
 public class DriveWithJoysticks extends CommandBase {
 
@@ -50,7 +49,7 @@ public class DriveWithJoysticks extends CommandBase {
     boolean squareInputs = true;
 
     // process joystick inputs
-    JoystickInputs inputs = new JoystickInputs(xSupplier.getAsDouble(), 
+    SwerveJoystickInputs inputs = new SwerveJoystickInputs(xSupplier.getAsDouble(), 
                                                ySupplier.getAsDouble(),
                                                turnSupplier.getAsDouble(),
                                                squareInputs,
@@ -79,53 +78,6 @@ public class DriveWithJoysticks extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     drive.stop();
-  }
-
-
-
-  static class JoystickInputs 
-  {
-    double linearMagnitude;
-    double linearAngleRadians;
-    double turn;
-
-    public JoystickInputs(double xIn, double yIn, double turnIn, boolean squareInputs, boolean precisionEnable) {
-      double x = applyDeadband(xIn);
-      double y = applyDeadband(yIn);
-      turn = applyDeadband(turnIn);
-
-      linearMagnitude = Math.hypot(x, y);
-      linearAngleRadians = Math.atan2(y, x);
-
-      // apply non-lineariy for increased sensitivity for smaller movements
-      if (squareInputs) {
-        linearMagnitude = linearMagnitude * linearMagnitude;
-        turn = Math.copySign(turn*turn, turn);
-      }
-
-      // limit to unit circle
-      linearMagnitude = MathUtil.clamp(linearMagnitude, -1.0, +1.0);
-
-      // Apply speed limits        
-      if (precisionEnable) {
-        linearMagnitude *= DriveConstants.precisionLinearMultiplier;
-        turn *= DriveConstants.precisionTurnMulitiplier;
-      }
-    }
-
-    
-    private double applyDeadband(double in) {
-      double out = 0;
-      double deadband = DriveConstants.driveJoystickDeadbandPercent;
-      if (Math.abs(in) > deadband) {
-        out = Math.copySign((Math.abs(in) - deadband) / (1 - deadband), in);
-      }
-      return out;
-    }
-
-    public double getX() { return linearMagnitude * Math.cos(linearAngleRadians); }
-    public double getY() { return linearMagnitude * Math.sin(linearAngleRadians); }
-    public double getTurn() { return turn; }
   }
 
 

@@ -44,7 +44,7 @@ public class RobotContainer {
   private final CommandXboxController driveController = new CommandXboxController(0);
 
   // LEDs
-  private final LEDFrameworkSystem candleSystem;
+  private final LEDFrameworkSystem ledSystem;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<AutoRoutine> autoChooser = new LoggedDashboardChooser<>("Auto Routine");
@@ -67,7 +67,7 @@ public class RobotContainer {
           new ModuleIOFalcon500(DriveModulePosition.BACK_LEFT),
           new ModuleIOFalcon500(DriveModulePosition.BACK_RIGHT));
 
-          candleSystem = new LEDFrameworkSystem();
+          ledSystem = new LEDFrameworkSystem();
         break;
 
       // Sim robot, instantiate physics sim IO implementations
@@ -79,7 +79,7 @@ public class RobotContainer {
           new ModuleIOSim(),
           new ModuleIOSim());
 
-          candleSystem = null;
+          ledSystem = null;
         break;
 
         default:
@@ -90,7 +90,7 @@ public class RobotContainer {
               new ModuleIO() {},
               new ModuleIO() {});
 
-          candleSystem = null;
+          ledSystem = null;
     }
 
     // Configure the button bindings
@@ -142,6 +142,8 @@ public class RobotContainer {
     //     () -> driveController.getHID().getLeftBumper()    // precision speed
     //     )
     //   );
+
+    
     drive.setDefaultCommand(new DriveWithPreciseFlick(
       drive, 
       () -> -driveController.getLeftY(), 
