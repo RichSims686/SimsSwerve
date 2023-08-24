@@ -122,7 +122,7 @@ public class Drive extends SubsystemBase {
               correctionTwist.dy / Constants.loopPeriodSecs,
               correctionTwist.dtheta / Constants.loopPeriodSecs); // apply twist correction
       SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(correctedSpeeds);
-      SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, DriveConstants.maxDriveSpeed);
+      SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, DriveConstants.maxDriveSpeedMetersPerSec);
 
       
       // Set to last angles if zero
@@ -203,9 +203,9 @@ public class Drive extends SubsystemBase {
 
   public void drivePercent(ChassisSpeeds speeds) {
     driveVelocity(new ChassisSpeeds(
-                speeds.vxMetersPerSecond * DriveConstants.maxDriveSpeed,
-                speeds.vyMetersPerSecond * DriveConstants.maxDriveSpeed,
-                speeds.omegaRadiansPerSecond * DriveConstants.maxTurnRate));
+                speeds.vxMetersPerSecond * DriveConstants.maxDriveSpeedMetersPerSec,
+                speeds.vyMetersPerSecond * DriveConstants.maxDriveSpeedMetersPerSec,
+                speeds.omegaRadiansPerSecond * DriveConstants.maxTurnRateRadiansPerSec));
   }
 
   /** Zeros the drive encoders. */
@@ -235,12 +235,12 @@ public class Drive extends SubsystemBase {
 
   /** Returns the maximum linear speed in meters per sec. */
   public double getMaxLinearSpeedMetersPerSec() {
-    return DriveConstants.maxDriveSpeed;
+    return DriveConstants.maxDriveSpeedMetersPerSec;
   }
 
   /** Returns the maximum angular speed in radians per sec. */
-  public double getMaxAngularSpeedRadPerSec() {
-    return DriveConstants.maxTurnRate;
+  public double getMaxAngularSpeedRadiansPerSec() {
+    return DriveConstants.maxTurnRateRadiansPerSec;
   }
 
   /**
@@ -304,10 +304,10 @@ public class Drive extends SubsystemBase {
   /** Returns an array of module translations. */
   public Translation2d[] getModuleTranslations() {
     Translation2d[] moduleTranslations = new Translation2d[DriveConstants.numDriveModules];
-    moduleTranslations[DriveModulePosition.FRONT_LEFT.ordinal()]  = new Translation2d( DriveConstants.trackWidthX / 2.0,  DriveConstants.trackWidthY / 2.0);
-    moduleTranslations[DriveModulePosition.FRONT_RIGHT.ordinal()] = new Translation2d( DriveConstants.trackWidthX / 2.0, -DriveConstants.trackWidthY / 2.0);
-    moduleTranslations[DriveModulePosition.BACK_LEFT.ordinal()]   = new Translation2d(-DriveConstants.trackWidthX / 2.0,  DriveConstants.trackWidthY / 2.0);
-    moduleTranslations[DriveModulePosition.BACK_RIGHT.ordinal()]  = new Translation2d(-DriveConstants.trackWidthX / 2.0, -DriveConstants.trackWidthY / 2.0);
+    moduleTranslations[DriveModulePosition.FRONT_LEFT.ordinal()]  = new Translation2d( DriveConstants.trackWidthXMeters / 2.0,  DriveConstants.trackWidthYMeters / 2.0);
+    moduleTranslations[DriveModulePosition.FRONT_RIGHT.ordinal()] = new Translation2d( DriveConstants.trackWidthXMeters / 2.0, -DriveConstants.trackWidthYMeters / 2.0);
+    moduleTranslations[DriveModulePosition.BACK_LEFT.ordinal()]   = new Translation2d(-DriveConstants.trackWidthXMeters / 2.0,  DriveConstants.trackWidthYMeters / 2.0);
+    moduleTranslations[DriveModulePosition.BACK_RIGHT.ordinal()]  = new Translation2d(-DriveConstants.trackWidthXMeters / 2.0, -DriveConstants.trackWidthYMeters / 2.0);
     return moduleTranslations;
   }
 

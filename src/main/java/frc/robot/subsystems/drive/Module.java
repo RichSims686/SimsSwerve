@@ -38,7 +38,7 @@ public class Module {
   private final PIDController turnFeedback =  new PIDController(0.0, 0.0, 0.0, Constants.loopPeriodSecs);
 
   static {
-      wheelRadius.initDefault(Constants.DriveConstants.wheelRadiusM);
+      wheelRadius.initDefault(Constants.DriveConstants.wheelRadiusMeters);
       driveKp.initDefault(0.1);
       driveKd.initDefault(0.0);
       driveKs.initDefault(0.14456);

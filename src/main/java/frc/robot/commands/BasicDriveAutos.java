@@ -31,7 +31,7 @@ public class BasicDriveAutos {
     }
 
     public static Command driveForwardAuto(double distanceMeters, Drive drive) {
-        return driveForwardAuto(distanceMeters, DriveConstants.maxDriveSpeed, DriveConstants.maxDriveSpeed / timeToMaxSpeed, drive);
+        return driveForwardAuto(distanceMeters, DriveConstants.maxDriveSpeedMetersPerSec, DriveConstants.maxDriveSpeedMetersPerSec / timeToMaxSpeed, drive);
     }
 
     public static Command driveForwardAuto(double distanceMeters, double maxSpeedMetersPerSec, double maxAccelMetersPerSec2, Drive drive) {
@@ -50,7 +50,7 @@ public class BasicDriveAutos {
     }
 
     public static Command driveBackwardAuto(double distanceMeters, Drive drive) {
-        return driveBackwardAuto(distanceMeters, DriveConstants.maxDriveSpeed, DriveConstants.maxDriveSpeed / timeToMaxSpeed, drive);
+        return driveBackwardAuto(distanceMeters, DriveConstants.maxDriveSpeedMetersPerSec, DriveConstants.maxDriveSpeedMetersPerSec / timeToMaxSpeed, drive);
     }
 
     public static Command driveBackwardAuto(double distanceMeters, double maxSpeedMetersPerSec, double maxAccelMetersPerSec2, Drive drive) {
@@ -69,7 +69,7 @@ public class BasicDriveAutos {
     }
 
     public static Command driveForwardThenBackAuto(double distanceMeters, Drive drive) {
-        return driveForwardThenBackAuto(distanceMeters, DriveConstants.maxDriveSpeed, DriveConstants.maxDriveSpeed / timeToMaxSpeed, drive);
+        return driveForwardThenBackAuto(distanceMeters, DriveConstants.maxDriveSpeedMetersPerSec, DriveConstants.maxDriveSpeedMetersPerSec / timeToMaxSpeed, drive);
     }
 
     public static Command driveForwardThenBackAuto(double distanceMeters, double maxSpeedMetersPerSec, double maxAccelMetersPerSec2, Drive drive) {
@@ -87,7 +87,7 @@ public class BasicDriveAutos {
     }
 
     public static Command spinCcwAuto(double turnRadians, Drive drive) {
-        return spinCcwAuto(turnRadians, DriveConstants.maxTurnRate, DriveConstants.maxTurnRate / timeToMaxSpeed, drive);
+        return spinCcwAuto(turnRadians, DriveConstants.maxTurnRateRadiansPerSec, DriveConstants.maxTurnRateRadiansPerSec / timeToMaxSpeed, drive);
     }
 
     public static Command spinCcwAuto(double turnRadians, double maxSpeedRadPerSec, double maxAccelRadPerSec2, Drive drive) {
@@ -103,7 +103,7 @@ public class BasicDriveAutos {
     }
 
     public static Command spinCwAuto(double turnRadians, Drive drive) {
-        return spinCcwAuto(turnRadians, DriveConstants.maxTurnRate, DriveConstants.maxTurnRate / timeToMaxSpeed, drive);
+        return spinCcwAuto(turnRadians, DriveConstants.maxTurnRateRadiansPerSec, DriveConstants.maxTurnRateRadiansPerSec / timeToMaxSpeed, drive);
     }
 
     public static Command spinCwAuto(double turnRadians, double maxSpeedRadPerSec, double maxAccelRadPerSec2, Drive drive) {
@@ -119,7 +119,7 @@ public class BasicDriveAutos {
     }
 
     public static Command spinCcwThenCwAuto(double turnRadians, Drive drive) {
-        return spinCcwThenCwAuto(turnRadians, DriveConstants.maxTurnRate, DriveConstants.maxTurnRate / timeToMaxSpeed, drive);
+        return spinCcwThenCwAuto(turnRadians, DriveConstants.maxTurnRateRadiansPerSec, DriveConstants.maxTurnRateRadiansPerSec / timeToMaxSpeed, drive);
     }
 
     public static Command spinCcwThenCwAuto(double turnRadians, double maxSpeedRadPerSec, double maxAccelRadPerSec2, Drive drive) {

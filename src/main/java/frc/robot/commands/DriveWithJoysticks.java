@@ -58,7 +58,7 @@ public class DriveWithJoysticks extends CommandBase {
     // Convert to meters/sec and radians/sec
     double vxMetersPerSecond = inputs.getX() * drive.getMaxLinearSpeedMetersPerSec();
     double vyMetersPerSecond = inputs.getY() * drive.getMaxLinearSpeedMetersPerSec();
-    double omegaRadiansPerSecond = inputs.getTurn() * drive.getMaxAngularSpeedRadPerSec();
+    double omegaRadiansPerSecond = inputs.getTurn() * drive.getMaxAngularSpeedRadiansPerSec();
 
     // field relative controls
     ChassisSpeeds speeds = new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);

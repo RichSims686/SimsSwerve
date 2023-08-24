@@ -68,9 +68,9 @@ public final class Constants {
         // weight with battery and bumpers
         public static final double weightKg = Units.lbsToKilograms(58.0);
 
-        public static final double trackWidthX = Units.inchesToMeters(12.00); // distance between the front and back wheels
-        public static final double trackWidthY = Units.inchesToMeters(12.00); // distance between the left and right wheels
-        public static final double wheelRadiusM = Units.inchesToMeters(2.056);
+        public static final double trackWidthXMeters = Units.inchesToMeters(12.00); // distance between the front and back wheels
+        public static final double trackWidthYMeters = Units.inchesToMeters(12.00); // distance between the left and right wheels
+        public static final double wheelRadiusMeters = Units.inchesToMeters(2.056);
 
         public static final double driveWheelGearReduction = 1.0 / ((15.0/60.0)*(28.0/16.0)*(14.0/50.0));
         public static final double turnWheelGearReduction = 1.0 / ((15.0/32.0)*(10.0/60.0));
@@ -93,10 +93,10 @@ public final class Constants {
         
         public static final SwerveDriveKinematics kinematics = 
             new SwerveDriveKinematics(
-                new Translation2d(+trackWidthY / 2.0, +trackWidthX / 2.0), //front left
-                new Translation2d(+trackWidthY / 2.0, -trackWidthX / 2.0), //front right
-                new Translation2d(-trackWidthY / 2.0, +trackWidthX / 2.0), //rear left
-                new Translation2d(-trackWidthY / 2.0, -trackWidthX / 2.0)  //rear right
+                new Translation2d(+trackWidthYMeters / 2.0, +trackWidthXMeters / 2.0), //front left
+                new Translation2d(+trackWidthYMeters / 2.0, -trackWidthXMeters / 2.0), //front right
+                new Translation2d(-trackWidthYMeters / 2.0, +trackWidthXMeters / 2.0), //rear left
+                new Translation2d(-trackWidthYMeters / 2.0, -trackWidthXMeters / 2.0)  //rear right
         );
 
         public static final double[] driveRealKps = {0.7, 0.4, 0.7, 0.7};
@@ -107,8 +107,9 @@ public final class Constants {
         public static final double driveSnapKd = 0;
 
 
-        public static final double maxDriveSpeed = 4;
-        public static final double maxTurnRate = 4 * Math.PI;
+        public static final double maxDriveSpeedMetersPerSec = 4;
+        // tangential speed (m/s) = radial speed (rad/s) * radius (m)  
+        public static final double maxTurnRateRadiansPerSec = maxDriveSpeedMetersPerSec / Math.hypot(trackWidthXMeters/2, trackWidthYMeters/2);
 
         public static final double driveJoystickDeadbandPercent = 0.12;
         public static final double driveMaxJerk = 200.0;

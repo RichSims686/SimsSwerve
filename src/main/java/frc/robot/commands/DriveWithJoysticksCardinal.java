@@ -34,7 +34,7 @@ public class DriveWithJoysticksCardinal extends CommandBase {
   private final BooleanSupplier precisionSupplier; // slow-down for precision positioning
 
   private double desiredHeadingRadians;
-  private final double headingKp = 4 / DriveConstants.maxTurnRate;
+  private final double headingKp = 4 / DriveConstants.maxTurnRateRadiansPerSec;
   private final double headingKd = 0;
   private final double headingKi = 0;
   private final double headingTolerance = Units.degreesToRadians(5.0);
@@ -86,7 +86,7 @@ public class DriveWithJoysticksCardinal extends CommandBase {
     // Convert to meters/sec and radians/sec
     double vxMetersPerSecond = inputs.getX() * drive.getMaxLinearSpeedMetersPerSec();
     double vyMetersPerSecond = inputs.getY() * drive.getMaxLinearSpeedMetersPerSec();
-    double omegaRadiansPerSecond = inputs.getTurn() * drive.getMaxAngularSpeedRadPerSec();  
+    double omegaRadiansPerSecond = inputs.getTurn() * drive.getMaxAngularSpeedRadiansPerSec();  
 
     // field relative controls
     ChassisSpeeds speeds = new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
