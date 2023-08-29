@@ -53,6 +53,7 @@ public class DriveWithJoysticks extends CommandBase {
                                                ySupplier.getAsDouble(),
                                                turnSupplier.getAsDouble(),
                                                squareInputs,
+                                               squareInputs,
                                                precisionSupplier.getAsBoolean());
 
     // Convert to meters/sec and radians/sec

@@ -64,6 +64,7 @@ public class ModuleIOFalcon500 implements ModuleIO {
         driveConfig.MotorOutput.Inverted = driveInverted;
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveConfig.MotorOutput.DutyCycleNeutralDeadband = 0.0;
+        driveConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 1;
         driveConfig.CurrentLimits.SupplyCurrentLimit = 80.0;
         driveConfig.CurrentLimits.SupplyCurrentThreshold = 70.0;
         driveConfig.CurrentLimits.SupplyTimeThreshold = 0.5;

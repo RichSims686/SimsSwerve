@@ -9,7 +9,7 @@ public class SwerveJoystickInputs
     double linearAngleRadians;
     double turn;
 
-    public SwerveJoystickInputs(double xIn, double yIn, double turnIn, boolean squareInputs, boolean precisionEnable) {
+    public SwerveJoystickInputs(double xIn, double yIn, double turnIn, boolean squareLinearInputs, boolean squareTurnInputs, boolean precisionEnable) {
       double x = applyDeadband(xIn);
       double y = applyDeadband(yIn);
       turn = applyDeadband(turnIn);
@@ -18,8 +18,10 @@ public class SwerveJoystickInputs
       linearAngleRadians = Math.atan2(y, x);
 
       // apply non-lineariy for increased sensitivity for smaller movements
-      if (squareInputs) {
+      if (squareLinearInputs) {
         linearMagnitude = linearMagnitude * linearMagnitude;
+      }
+      if (squareTurnInputs) {
         turn = Math.copySign(turn*turn, turn);
       }
 

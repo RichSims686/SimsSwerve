@@ -14,7 +14,7 @@ public class FlashingAnimation extends LEDAnimation {
     public FlashingAnimation    setPeriod(double period)    {this.period = period; return this;}
 
     public FlashingAnimation(Gradient gradient, LEDStrip... strips) {
-        this(gradient, TilingFunction.Modulo, strips);
+        this(gradient, TilingFunction.Sawtooth, strips);
     }
     public FlashingAnimation(Gradient gradient, TilingFunction tilingFunction, LEDStrip... strips) {
         this.strips = strips;

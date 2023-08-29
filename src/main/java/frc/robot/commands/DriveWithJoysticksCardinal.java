@@ -81,6 +81,7 @@ public class DriveWithJoysticksCardinal extends CommandBase {
                                                ySupplier.getAsDouble(),
                                                turnInput,
                                                squareInputs,
+                                               false,
                                                precisionSupplier.getAsBoolean());
     
     // Convert to meters/sec and radians/sec
