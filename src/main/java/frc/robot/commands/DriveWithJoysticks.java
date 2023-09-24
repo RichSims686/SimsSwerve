@@ -8,34 +8,31 @@
 package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.SwerveJoystickInputs;
+import frc.robot.subsystems.drive.SwerveJoysticks.ProcessedJoysticks;
 
 public class DriveWithJoysticks extends CommandBase {
 
     private final Drive drive;
-    private final DoubleSupplier xSupplier; // x-axis translation
-    private final DoubleSupplier ySupplier; // y-axis translation
-    private final DoubleSupplier turnSupplier; // rotation
-    private final BooleanSupplier precisionSupplier; // slow-down for precision positioning
-    private final BooleanSupplier robotRelativeOverride; // robot-relative instead of field-relative
+    private final Supplier<ProcessedJoysticks> joystickSupplier;
+    private final BooleanSupplier fieldRelativeSupplier;    // field-relative instead of robot-relative
+    private final BooleanSupplier precisionSupplier;        // slower speeds for precision tasks
 
     /** Creates a new DriveWithJoysticks. */
-    public DriveWithJoysticks(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier,
-            DoubleSupplier turnSupplier, BooleanSupplier robotRelativeOverride, BooleanSupplier precisionSupplier) {
+    public DriveWithJoysticks(Drive drive, Supplier<ProcessedJoysticks> joystickSupplier, 
+            BooleanSupplier fieldRelativeSupplier, BooleanSupplier precisionSupplier) {
         addRequirements(drive);
         this.drive = drive;
-        this.xSupplier = xSupplier;
-        this.ySupplier = ySupplier;
-        this.turnSupplier = turnSupplier;
-        this.robotRelativeOverride = robotRelativeOverride;
+        this.joystickSupplier = joystickSupplier;
+        this.fieldRelativeSupplier = fieldRelativeSupplier;
         this.precisionSupplier = precisionSupplier;
     }
 
@@ -46,27 +43,27 @@ public class DriveWithJoysticks extends CommandBase {
     @Override
     public void execute() {
 
-        boolean squareLinearInputs = true;
-        boolean squareTurnInputs = false;
-
         // process joystick inputs
-        SwerveJoystickInputs inputs = new SwerveJoystickInputs(xSupplier.getAsDouble(),
-                ySupplier.getAsDouble(),
-                turnSupplier.getAsDouble(),
-                squareLinearInputs,
-                squareTurnInputs,
-                precisionSupplier.getAsBoolean());
+        ProcessedJoysticks processedJoysticks = joystickSupplier.get();
+        boolean fieldRelative = fieldRelativeSupplier.getAsBoolean();
+        boolean precision = precisionSupplier.getAsBoolean();
 
         // Convert to meters/sec and radians/sec
-        double vxMetersPerSecond = inputs.getX() * drive.getMaxLinearSpeedMetersPerSec();
-        double vyMetersPerSecond = inputs.getY() * drive.getMaxLinearSpeedMetersPerSec();
-        double omegaRadiansPerSecond = inputs.getTurn() * drive.getMaxAngularSpeedRadiansPerSec();
+        double vxMetersPerSecond = processedJoysticks.getX() * drive.getMaxLinearSpeedMetersPerSec();
+        double vyMetersPerSecond = processedJoysticks.getY() * drive.getMaxLinearSpeedMetersPerSec();
+        double omegaRadiansPerSecond = processedJoysticks.getTurn() * drive.getMaxAngularSpeedRadiansPerSec();
 
-        // field relative controls
+        if (precision) {
+            vxMetersPerSecond *= DriveConstants.precisionLinearMultiplier;
+            vyMetersPerSecond *= DriveConstants.precisionLinearMultiplier;
+            omegaRadiansPerSecond *= DriveConstants.precisionTurnMulitiplier;
+        }
+
+        // robot relative controls
         ChassisSpeeds speeds = new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
 
-        if (robotRelativeOverride.getAsBoolean()) {
-            // robot relative controls
+        if (fieldRelative) {
+            // field relative controls
             var driveRotation = drive.getRotation(); // angle from alliance wall normal
             if (DriverStation.getAlliance() == Alliance.Red) {
                 driveRotation = driveRotation.rotateBy(new Rotation2d(Math.PI));
