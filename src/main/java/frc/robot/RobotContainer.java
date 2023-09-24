@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.DriveModulePosition;
 import frc.robot.commands.BasicDriveAutos;
 import frc.robot.commands.DriveInSquare;
@@ -129,18 +130,19 @@ public class RobotContainer {
 
     private void configureSubsystems() {
 
-        drive.setDefaultCommand(new DriveWithJoysticks(
-            drive,
-            SwerveJoysticks.process(
-                () -> -driveController.getLeftY(),  // forward is field +x axis
-                () -> -driveController.getLeftX(),  //   right is field +y axis
-                () -> -driveController.getRightX(), // turn axis
-                true,           // squareLinearInputs
-                true              // squareTurnInputs    
-            ),                                  
-            () -> !driveController.getHID().getRightBumper(),   // field relative controls
-            () -> driveController.getHID().getLeftBumper()      // precision speed
-        ));
+        // drive.setDefaultCommand(new DriveWithJoysticks(
+        //     drive,
+        //     SwerveJoysticks.process(
+        //         () -> -driveController.getLeftY(),  // forward is field +x axis
+        //         () -> -driveController.getLeftX(),  //   right is field +y axis
+        //         () -> -driveController.getRightX(), // turn axis
+        //         true,           // squareLinearInputs
+        //         true,           // squareTurnInputs    
+        //         DriveConstants.joystickSlewRateLimit
+        //     ),                                  
+        //     () -> !driveController.getHID().getRightBumper(),   // field relative controls
+        //     () -> driveController.getHID().getLeftBumper()      // precision speed
+        // ));
 
         // drive.setDefaultCommand(new DriveWithJoysticksCardinal(
         //     drive,
@@ -149,7 +151,8 @@ public class RobotContainer {
         //         () -> -driveController.getLeftY(),
         //         () -> -driveController.getRightX(),
         //         true,
-        //         false
+        //         false,
+        //         DriveConstants.joystickSlewRateLimit
         //     ),         
         //     () -> Drive.getCardinalDirectionFromJoystick(
         //         () -> -driveController.getRightX(), 
@@ -158,23 +161,24 @@ public class RobotContainer {
         //     () -> driveController.getHID().getLeftBumper()    // precision speed
         // ));
 
-        // drive.setDefaultCommand(new DriveWithPreciseFlick(
-        //     drive, 
-        //     SwerveJoysticks.process(
-        //         () -> -driveController.getLeftX(),
-        //         () -> -driveController.getLeftY(),
-        //         () -> -driveController.getRightX(),
-        //         true,
-        //         false
-        //     ),  
-        //     DriveWithPreciseFlick.headingFromJoystick(
-        //         () -> -driveController.getRightX(), 
-        //         () -> -driveController.getRightY(), 
-        //         15, 
-        //         0.5
-        //     ), 
-        //     () -> driveController.getHID().getLeftBumper()
-        // ));
+        drive.setDefaultCommand(new DriveWithPreciseFlick(
+            drive, 
+            SwerveJoysticks.process(
+                () -> -driveController.getLeftX(),
+                () -> -driveController.getLeftY(),
+                () -> -driveController.getRightX(),
+                true,
+                false,
+                DriveConstants.joystickSlewRateLimit
+            ),  
+            DriveWithPreciseFlick.headingFromJoystick(
+                () -> -driveController.getRightX(), 
+                () -> -driveController.getRightY(), 
+                15, 
+                0.5
+            ), 
+            () -> driveController.getHID().getLeftBumper()
+        ));
     }
 
 
