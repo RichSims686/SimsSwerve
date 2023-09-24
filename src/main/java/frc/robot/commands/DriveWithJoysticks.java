@@ -46,13 +46,15 @@ public class DriveWithJoysticks extends CommandBase {
     @Override
     public void execute() {
 
-        boolean squareInputs = true;
+        boolean squareLinearInputs = true;
+        boolean squareTurnInputs = false;
 
         // process joystick inputs
         SwerveJoystickInputs inputs = new SwerveJoystickInputs(xSupplier.getAsDouble(),
                 ySupplier.getAsDouble(),
                 turnSupplier.getAsDouble(),
-                squareInputs,
+                squareLinearInputs,
+                squareTurnInputs,
                 precisionSupplier.getAsBoolean());
 
         // Convert to meters/sec and radians/sec
