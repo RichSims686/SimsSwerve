@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.DriveConstants.DriveModulePosition;
 import frc.robot.commands.BasicDriveAutos;
 import frc.robot.commands.DriveInSquare;
@@ -140,7 +141,8 @@ public class RobotContainer {
         //         () -> -driveController.getLeftX(),  //   right is field +y axis
         //         () -> -driveController.getRightX(), // turn axis
         //         true,           // squareLinearInputs
-        //         true              // squareTurnInputs    
+        //         true,           // squareTurnInputs    
+        //         DriveConstants.joystickSlewRateLimit
         //     ),                                  
         //     () -> !driveController.getHID().getRightBumper(),   // field relative controls
         //     () -> driveController.getHID().getLeftBumper()      // precision speed
@@ -153,7 +155,8 @@ public class RobotContainer {
         //         () -> -driveController.getLeftY(),
         //         () -> -driveController.getRightX(),
         //         true,
-        //         false
+        //         false,
+        //         DriveConstants.joystickSlewRateLimit
         //     ),         
         //     () -> Drive.getCardinalDirectionFromJoystick(
         //         () -> -driveController.getRightX(), 
@@ -169,7 +172,8 @@ public class RobotContainer {
                 () -> -driveController.getLeftY(),
                 () -> -driveController.getRightX(),
                 true,
-                false
+                false,
+                DriveConstants.joystickSlewRateLimit
             ),  
             DriveWithPreciseFlick.headingFromJoystick(
                 () -> -driveController.getRightX(), 

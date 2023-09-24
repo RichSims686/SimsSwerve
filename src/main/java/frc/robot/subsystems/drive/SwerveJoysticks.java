@@ -4,13 +4,17 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import frc.robot.Constants.DriveConstants;
 
 public class SwerveJoysticks {
 
     public static Supplier<ProcessedJoysticks> process(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier turnSupplier,
-            boolean squareLinearInputs, boolean squareTurnInputs) {
+            boolean squareLinearInputs, boolean squareTurnInputs, double slewRatePerSec) {
         return new Supplier<ProcessedJoysticks>() {
+
+            SlewRateLimiter slewRateLimiter = new SlewRateLimiter(slewRatePerSec);
+
             @Override
 			public ProcessedJoysticks get() {
                 double x = applyDeadband(xSupplier.getAsDouble());
@@ -31,6 +35,7 @@ public class SwerveJoysticks {
 
                 // limit to unit circle
                 linearMagnitude = MathUtil.clamp(linearMagnitude, -1.0, +1.0);
+                linearMagnitude = slewRateLimiter.calculate(linearMagnitude);
 
                 return new ProcessedJoysticks(linearMagnitude, linearAngleRadians, turn);
             }
