@@ -21,14 +21,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.SwerveJoystickInputs;
+import frc.robot.subsystems.drive.SwerveJoysticks.ProcessedJoysticks;
 
 public class DriveWithPreciseFlick extends CommandBase {
 
 	private final Drive drive;
-	private final DoubleSupplier xSupplier; // x-axis translation
-	private final DoubleSupplier ySupplier; // y-axis translation
+    private final Supplier<ProcessedJoysticks> joystickSupplier;
 	private final Supplier<Optional<Double>> headingSupplier; // rotation
 	private final BooleanSupplier precisionSupplier; // slow-down for precision positioning
 
@@ -67,12 +67,11 @@ public class DriveWithPreciseFlick extends CommandBase {
 	}
 
   	/** Creates a new DriveWithJoysticks. */
-	public DriveWithPreciseFlick(Drive drive, DoubleSupplier xSupplier, DoubleSupplier ySupplier, Supplier<Optional<Double>> headingSupplier, BooleanSupplier precisionSupplier) {
+	public DriveWithPreciseFlick(Drive drive, Supplier<ProcessedJoysticks> joystickSupplier, Supplier<Optional<Double>> headingSupplier, BooleanSupplier precisionSupplier) {
 		addRequirements(drive);
 		this.drive = drive;
-		this.xSupplier = xSupplier;
-		this.ySupplier = ySupplier;
-		this.headingSupplier = headingSupplier;    
+        this.joystickSupplier = joystickSupplier;
+        this.headingSupplier = headingSupplier;    
 		this.precisionSupplier = precisionSupplier;
 
 		headingPID = new PIDController(headingKp, headingKd, headingKi);
@@ -88,6 +87,9 @@ public class DriveWithPreciseFlick extends CommandBase {
 	@Override
 	public void execute() {
 		
+        ProcessedJoysticks processedJoysticks = joystickSupplier.get();
+        boolean precision = precisionSupplier.getAsBoolean();
+
 		// update desired direction
 		Optional<Double> desiredHeading = headingSupplier.get();
 		if (desiredHeading.isPresent()) {
@@ -99,26 +101,21 @@ public class DriveWithPreciseFlick extends CommandBase {
 		turnInput = headingPID.atSetpoint() ? 0 : turnInput;
 		turnInput = MathUtil.clamp(turnInput, -0.5, +0.5);
 
-		// process joystick inputs
-		boolean squareInputs = true;
-		SwerveJoystickInputs inputs = new SwerveJoystickInputs(
-			xSupplier.getAsDouble(), 
-			ySupplier.getAsDouble(),
-			turnInput,
-			squareInputs,
-			false,
-			precisionSupplier.getAsBoolean()
-		);
-		
-		// Convert to meters/sec and radians/sec
-		double vxMetersPerSecond = inputs.getX() * drive.getMaxLinearSpeedMetersPerSec();
-		double vyMetersPerSecond = inputs.getY() * drive.getMaxLinearSpeedMetersPerSec();
-		double omegaRadiansPerSecond = turnInput * drive.getMaxAngularSpeedRadiansPerSec();  
+        // Convert to meters/sec and radians/sec
+        double vxMetersPerSecond = processedJoysticks.getX() * drive.getMaxLinearSpeedMetersPerSec();
+        double vyMetersPerSecond = processedJoysticks.getY() * drive.getMaxLinearSpeedMetersPerSec();
+        double omegaRadiansPerSecond = turnInput * drive.getMaxAngularSpeedRadiansPerSec();
 
-		// field relative controls
-		ChassisSpeeds speeds = new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
+        if (precision) {
+            vxMetersPerSecond *= DriveConstants.precisionLinearMultiplier;
+            vyMetersPerSecond *= DriveConstants.precisionLinearMultiplier;
+            omegaRadiansPerSecond *= DriveConstants.precisionTurnMulitiplier;
+        }
 
 		// robot relative controls
+		ChassisSpeeds speeds = new ChassisSpeeds(vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond);
+
+		// field relative controls
 		var driveRotation = drive.getRotation(); // angle from alliance wall normal
 		if (DriverStation.getAlliance() == Alliance.Red) {
 			driveRotation = driveRotation.rotateBy(new Rotation2d(Math.PI));
