@@ -91,14 +91,6 @@ public final class Constants {
             InvertedValue.Clockwise_Positive,           // back right
         };
         
-        public static final SwerveDriveKinematics kinematics = 
-            new SwerveDriveKinematics(
-                new Translation2d(+trackWidthYMeters / 2.0, +trackWidthXMeters / 2.0), //front left
-                new Translation2d(+trackWidthYMeters / 2.0, -trackWidthXMeters / 2.0), //front right
-                new Translation2d(-trackWidthYMeters / 2.0, +trackWidthXMeters / 2.0), //rear left
-                new Translation2d(-trackWidthYMeters / 2.0, -trackWidthXMeters / 2.0)  //rear right
-        );
-
         public static final double[] driveRealKps = {0.7, 0.4, 0.7, 0.7};
         public static final double[] driveRealKds = {3.5, 2.5, 3.7, 3.5};
 

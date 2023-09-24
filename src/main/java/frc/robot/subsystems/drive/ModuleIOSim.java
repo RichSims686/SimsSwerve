@@ -25,12 +25,7 @@ public class ModuleIOSim implements ModuleIO {
         double angleDiffRad = turnSim.getAngularVelocityRadPerSec() * Constants.loopPeriodSecs;
         turnRelativePositionRad += angleDiffRad;
         turnAbsolutePositionRad += angleDiffRad;
-        while (turnAbsolutePositionRad < 0) {
-          turnAbsolutePositionRad += 2.0 * Math.PI;
-        }
-        while (turnAbsolutePositionRad > 2.0 * Math.PI) {
-          turnAbsolutePositionRad -= 2.0 * Math.PI;
-        }
+        turnAbsolutePositionRad = MathUtil.angleModulus(turnAbsolutePositionRad);
 
         if (zeroEncodersFlag) {
           inputs.drivePositionRad = 0.0;

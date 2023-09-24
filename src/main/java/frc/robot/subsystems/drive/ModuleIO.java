@@ -12,7 +12,7 @@ public interface ModuleIO {
         public double driveCurrentAmps = 0.0;
         public double driveTempCelcius = 0.0;
 
-        public double driveSetpointRadPerS = 0.0;
+        public double driveSetpointRadPerSec = 0.0;
 
         public double turnAbsolutePositionRad = 0.0;
         public double turnPositionRad = 0.0;
