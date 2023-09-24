@@ -7,15 +7,11 @@ import com.ctre.phoenix.led.CANdleConfiguration;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.util.led.LEDColor;
 import frc.robot.util.led.animation.FlashingAnimation;
 import frc.robot.util.led.animation.LEDAnimation;
 import frc.robot.util.led.animation.LEDManager;
 import frc.robot.util.led.animation.ScrollingAnimation;
-import frc.robot.util.led.functions.Gradient.BasicGradient;
-import frc.robot.util.led.functions.Gradient.BasicGradient.InterpolationStyle;
 import frc.robot.util.led.functions.Gradient;
-import frc.robot.util.led.functions.TilingFunction;
 import frc.robot.util.led.strips.CANdleStrip;
 import frc.robot.util.led.strips.LEDStrip.SoftwareStrip;
 
@@ -25,10 +21,10 @@ public class LEDFrameworkSystem extends SubsystemBase {
     private final CANdleStrip candleLEDs = new CANdleStrip(m_candle, 18*4);
     private final SoftwareStrip onboardLEDs =   candleLEDs.getOnboardLEDs();
     private final SoftwareStrip offboardLEDs =  candleLEDs.getOffboardLEDs();
-    private final SoftwareStrip rightStrip =    offboardLEDs.substrip(0, 18);
-    private final SoftwareStrip backStrip =     offboardLEDs.substrip(18, 36);
-    private final SoftwareStrip leftStrip =     offboardLEDs.substrip(36, 54);
-    private final SoftwareStrip frontStrip =    offboardLEDs.substrip(54, 72);
+    // private final SoftwareStrip rightStrip =    offboardLEDs.substrip(0, 18);
+    // private final SoftwareStrip backStrip =     offboardLEDs.substrip(18, 36);
+    // private final SoftwareStrip leftStrip =     offboardLEDs.substrip(36, 54);
+    // private final SoftwareStrip frontStrip =    offboardLEDs.substrip(54, 72);
 
     private final LEDAnimation defaultOffboardAnimation = new ScrollingAnimation(Gradient.rainbow, offboardLEDs);
     private final LEDAnimation defaultOnboardAnimation = new FlashingAnimation(Gradient.blackToWhite, onboardLEDs);
@@ -59,5 +55,10 @@ public class LEDFrameworkSystem extends SubsystemBase {
     @Override
     public void periodic() {
         ledManager.runLEDs();
+    }
+
+    public void playOffboardScrolling(Gradient gradient) {
+        ledManager.stopAll();
+        ledManager.play(new ScrollingAnimation(gradient, offboardLEDs));
     }
 }

@@ -50,6 +50,13 @@ public class LEDManager {
         return false;
     }
 
+    public boolean stopAll() {
+        for (var animation : runningAnimations) {
+            stop(animation);
+        }
+        return runningAnimations.isEmpty();
+    }
+
     public LEDManager register(HardwareStrip... hardwareStrips) {
         for(HardwareStrip hardwareStrip : hardwareStrips) {
             if(!registeredStrips.contains(hardwareStrip)) {

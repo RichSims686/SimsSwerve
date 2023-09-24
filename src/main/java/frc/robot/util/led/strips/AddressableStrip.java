@@ -2,7 +2,6 @@ package frc.robot.util.led.strips;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import frc.robot.util.led.LEDColor;
 import frc.robot.util.led.LEDColor.RawLEDColor;
 import frc.robot.util.led.strips.LEDStrip.HardwareStrip;
 

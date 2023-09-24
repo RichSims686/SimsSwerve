@@ -2,7 +2,6 @@ package frc.robot.util.led.strips;
 
 import com.ctre.phoenix.led.CANdle;
 
-import frc.robot.util.led.LEDColor;
 import frc.robot.util.led.LEDColor.RawLEDColor;
 import frc.robot.util.led.strips.LEDStrip.HardwareStrip;
 
