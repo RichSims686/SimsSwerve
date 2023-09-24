@@ -16,7 +16,7 @@ import frc.robot.Constants.DriveConstants.DriveModulePosition;
 import frc.robot.commands.BasicDriveAutos;
 import frc.robot.commands.DriveInSquare;
 import frc.robot.commands.DriveStraightTrajectory;
-import frc.robot.commands.DriveWithPreciseFlick;
+import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.robot.subsystems.drive.Drive;

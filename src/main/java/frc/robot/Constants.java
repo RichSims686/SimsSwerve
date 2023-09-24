@@ -4,10 +4,17 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ctre.phoenix6.signals.InvertedValue;
 
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Quaternion;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
@@ -16,7 +23,7 @@ public final class Constants {
         REAL, SIM, REPLAY
     }
 
-    public static final Mode mode = Mode.REAL;
+    public static final Mode mode = Mode.SIM;
     ;
     public static final boolean tuningMode = true;    
 
@@ -121,69 +128,34 @@ public final class Constants {
 
    
 
-    // public static final class LEDConstants {
+    public static final class VisionConstants {
 
-    //     // Ports
-    //     public static final int ledPort = 0;
+        public static final String[] cameraNames = {
+            "FrontLeft", 
+            "FrontRight", 
+            "BackLeft", 
+            "BackRight",
+            "Limelight"
+        };
 
-    //     // LED Data
-    //     public static final int armLedCount = 123;
-    //     public static final int baseLedCount = 128;
+        // TODO: update camera names to above
+        // TODO: update camera position, orientation
+        // TODO: update Limelight webUI with camera position, AprilTags field locations
+        // TODO: update Limelight settings per docs
+        public static final Transform3d[] vehicleToCameras = {
+            new Transform3d(new Translation3d(0.03, 0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(-10))),
+            new Transform3d(new Translation3d(0.03, -0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(10))),
+            new Transform3d(new Translation3d(-0.03, 0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(-175))),
+            new Transform3d(new Translation3d(-0.03, -0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(175))),
+            new Transform3d(new Translation3d(-0.03, -0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(175)))
+        };
 
-    //     // Rainbow
-    //     public static final boolean dynamicRainbow = true;
-    //     public static final int dynamicRainbowSpeed = 1;
-
-    //     // Pre-Match Climb Pattern
-    //     public static final int climbSpeed = 2;
-    //     public static final int climbMaxDelay = 40;
-    //     public static final int climbMinDelay = 20;
-    //     public static final int climbMaxLength = 10;
-    //     public static final int climbMinLength = 5;
-
-    //     // Other
-    //     public static final Color activeSideFlashColor = new Color(0, 0, 0);
-    //     public static final Color intakeFlashColor = new Color(255, 255, 255);
-    //     public static final Color whistleFlashColor = new Color(255, 179, 0);
-
-    // }
-
-    // public static final class VisionConstants {
-
-    //     public static final String[] cameraNames = {
-    //         "FrontLeft", 
-    //         "FrontRight", 
-    //         "BackLeft", 
-    //         "BackRight"
-    //     };
-
-    //     public static final Transform3d[] vehicleToCameras = {//10 deg yaw, 5 deg pitch
-    //         new Transform3d(new Translation3d(0.03, 0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(-10))),
-    //         new Transform3d(new Translation3d(0.03, -0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(10))),
-    //         new Transform3d(new Translation3d(-0.03, 0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(-175))),
-    //         new Transform3d(new Translation3d(-0.03, -0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(175)))
-    //     };
-
-    //     public static final List<AprilTag> tags = new ArrayList<AprilTag>() {{
-    //         add(new AprilTag(1, new Pose3d(new Translation3d(15.51, 1.08, 0.46), new Rotation3d(new Quaternion(0, 0, 0, 1)))));
-    //         add(new AprilTag(2, new Pose3d(new Translation3d(15.51, 2.77, 0.46), new Rotation3d(new Quaternion(0, 0, 0, 1)))));
-    //         add(new AprilTag(3, new Pose3d(new Translation3d(15.51, 4.45, 0.46), new Rotation3d(new Quaternion(0, 0, 0, 1)))));
-    //         add(new AprilTag(4, new Pose3d(new Translation3d(16.18, 6.76, 0.70), new Rotation3d(new Quaternion(0, 0, 0, 1)))));
-    //         add(new AprilTag(5, new Pose3d(new Translation3d(0.36, 6.75, 0.70), new Rotation3d(new Quaternion(1, 0, 0, 0)))));
-    //         add(new AprilTag(6, new Pose3d(new Translation3d(1.03, 4.45, 0.46), new Rotation3d(new Quaternion(1, 0, 0, 0)))));
-    //         add(new AprilTag(7, new Pose3d(new Translation3d(1.03, 2.77, 0.46), new Rotation3d(new Quaternion(1, 0, 0, 0)))));
-    //         add(new AprilTag(8, new Pose3d(new Translation3d(1.03, 1.09, 0.46), new Rotation3d(new Quaternion(1, 0, 0, 0)))));
-    //     }};
-
-    //     public static final double fieldLength = 16.542;
-    //     public static final double fieldWidth = 8.014;
-
-    //     public static final double singleTagAmbiguityCutoff = 0.05;
-    //     public static final double minimumStdDev = 0.5;
-    //     public static final double stdDevEulerMultiplier = 0.3;
-    //     public static final double stdDevDistanceMultiplier = 0.4;
-
-    // }
+        // TODO: figure out vision stdDevs
+        public static final double singleTagAmbiguityCutoff = 0.05;
+        public static final double minimumStdDev = 0.5;
+        public static final double stdDevEulerMultiplier = 0.3;
+        public static final double stdDevDistanceMultiplier = 0.4;
+    }
 
     public static final class AutoConstants {
         
@@ -223,6 +195,36 @@ public final class Constants {
         public static final double initialBalanceSpeed = 1;
 
     }
+
+
+   // public static final class LEDConstants {
+
+    //     // Ports
+    //     public static final int ledPort = 0;
+
+    //     // LED Data
+    //     public static final int armLedCount = 123;
+    //     public static final int baseLedCount = 128;
+
+    //     // Rainbow
+    //     public static final boolean dynamicRainbow = true;
+    //     public static final int dynamicRainbowSpeed = 1;
+
+    //     // Pre-Match Climb Pattern
+    //     public static final int climbSpeed = 2;
+    //     public static final int climbMaxDelay = 40;
+    //     public static final int climbMinDelay = 20;
+    //     public static final int climbMaxLength = 10;
+    //     public static final int climbMinLength = 5;
+
+    //     // Other
+    //     public static final Color activeSideFlashColor = new Color(0, 0, 0);
+    //     public static final Color intakeFlashColor = new Color(255, 255, 255);
+    //     public static final Color whistleFlashColor = new Color(255, 179, 0);
+
+    // }
+    
+    
 
     // Not the robot main function. This is called by Gradle when deploying to
     // make sure nobody deploys sim code. 
