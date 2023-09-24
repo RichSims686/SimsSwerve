@@ -8,12 +8,13 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.RobotState;
+import frc.robot.subsystems.vision.AprilTagCameraIO.AprilTagCameraIOInputs;
 
 public class AprilTagCamera {
 
     private final String name;
     private final AprilTagCameraIO cameraIO;
-    private final AprilTagCameraIOInputsAutoLogged inputs = new AprilTagCameraIOInputsAutoLogged();
+    private final AprilTagCameraIOInputs inputs = new AprilTagCameraIOInputs();
 
     public AprilTagCamera(String name, AprilTagCameraIO cameraIO) {
         this.name = name;

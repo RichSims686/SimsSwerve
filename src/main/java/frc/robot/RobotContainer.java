@@ -17,8 +17,6 @@ import frc.robot.commands.BasicDriveAutos;
 import frc.robot.commands.DriveInSquare;
 import frc.robot.commands.DriveStraightTrajectory;
 import frc.robot.commands.DriveWithJoysticks;
-import frc.robot.commands.DriveWithJoysticksCardinal;
-import frc.robot.commands.DriveWithPreciseFlick;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.robot.subsystems.drive.Drive;
@@ -31,6 +29,7 @@ import frc.robot.subsystems.drive.SwerveJoysticks;
 import frc.robot.subsystems.leds.LEDFrameworkSystem;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
+import frc.robot.util.led.functions.Gradient;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -77,8 +76,7 @@ public class RobotContainer {
             // Sim robot, instantiate physics sim IO implementations
             case SIM:
                 drive = new Drive(
-                        new GyroIO() {
-                        },
+                        new GyroIO() {},
                         new ModuleIOSim(),
                         new ModuleIOSim(),
                         new ModuleIOSim(),
@@ -89,16 +87,11 @@ public class RobotContainer {
 
             default:
                 drive = new Drive(
-                        new GyroIO() {
-                        },
-                        new ModuleIO() {
-                        },
-                        new ModuleIO() {
-                        },
-                        new ModuleIO() {
-                        },
-                        new ModuleIO() {
-                        });
+                        new GyroIO() {},
+                        new ModuleIO() {},
+                        new ModuleIO() {},
+                        new ModuleIO() {},
+                        new ModuleIO() {});
 
                 ledSystem = null;
         }
@@ -135,18 +128,18 @@ public class RobotContainer {
 
     private void configureSubsystems() {
 
-        // drive.setDefaultCommand(new DriveWithJoysticks(
-        //     drive,
-        //     SwerveJoysticks.process(
-        //         () -> -driveController.getLeftY(),  // forward is field +x axis
-        //         () -> -driveController.getLeftX(),  //   right is field +y axis
-        //         () -> -driveController.getRightX(), // turn axis
-        //         true,           // squareLinearInputs
-        //         true              // squareTurnInputs    
-        //     ),                                  
-        //     () -> !driveController.getHID().getRightBumper(),   // field relative controls
-        //     () -> driveController.getHID().getLeftBumper()      // precision speed
-        // ));
+        drive.setDefaultCommand(new DriveWithJoysticks(
+            drive,
+            SwerveJoysticks.process(
+                () -> -driveController.getLeftY(),  // forward is field +x axis
+                () -> -driveController.getLeftX(),  //   right is field +y axis
+                () -> -driveController.getRightX(), // turn axis
+                true,           // squareLinearInputs
+                true              // squareTurnInputs    
+            ),                                  
+            () -> !driveController.getHID().getRightBumper(),   // field relative controls
+            () -> driveController.getHID().getLeftBumper()      // precision speed
+        ));
 
         // drive.setDefaultCommand(new DriveWithJoysticksCardinal(
         //     drive,
@@ -164,23 +157,23 @@ public class RobotContainer {
         //     () -> driveController.getHID().getLeftBumper()    // precision speed
         // ));
 
-        drive.setDefaultCommand(new DriveWithPreciseFlick(
-            drive, 
-            SwerveJoysticks.process(
-                () -> -driveController.getLeftX(),
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getRightX(),
-                true,
-                false
-            ),  
-            DriveWithPreciseFlick.headingFromJoystick(
-                () -> -driveController.getRightX(), 
-                () -> -driveController.getRightY(), 
-                15, 
-                0.5
-            ), 
-            () -> driveController.getHID().getLeftBumper()
-        ));
+        // drive.setDefaultCommand(new DriveWithPreciseFlick(
+        //     drive, 
+        //     SwerveJoysticks.process(
+        //         () -> -driveController.getLeftX(),
+        //         () -> -driveController.getLeftY(),
+        //         () -> -driveController.getRightX(),
+        //         true,
+        //         false
+        //     ),  
+        //     DriveWithPreciseFlick.headingFromJoystick(
+        //         () -> -driveController.getRightX(), 
+        //         () -> -driveController.getRightY(), 
+        //         15, 
+        //         0.5
+        //     ), 
+        //     () -> driveController.getHID().getLeftBumper()
+        // ));
     }
 
 
@@ -250,24 +243,15 @@ public class RobotContainer {
     }
 
     public void disabledInit() {
-        // if (RobotBase.isReal()) {
-        //     candleSystem.changeAnimation(AnimationTypes.Rainbow);
-        // }
     }
 
     public void disabledPeriodic() {
-    // if (activeAutoCommand == null || !activeAutoName.equals(autoChooser.getSelected())) {
-    //     activeAutoCommand = new AutoRoutines(autoChooser.getSelected(), drive, pivot, telescope, wrist, intake);
-    //     activeAutoName = autoChooser.getSelected();
-    // }
-
-    // drive.setBrakeMode(!brakeSwitch.get());
-    // ledManager.setOff(ledsSwitch.get());
     }
 
     public void enabledInit() {
-        // drive.setBrakeMode(true);
-        // ledManager.setOff(false);
+        if (ledSystem != null) {
+            ledSystem.playOffboardScrolling(Gradient.rainbow);
+        }
     }
 
 
