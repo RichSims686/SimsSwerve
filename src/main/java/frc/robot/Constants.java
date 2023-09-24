@@ -104,6 +104,7 @@ public final class Constants {
         // tangential speed (m/s) = radial speed (rad/s) * radius (m)  
         public static final double maxTurnRateRadiansPerSec = maxDriveSpeedMetersPerSec / Math.hypot(trackWidthXMeters/2, trackWidthYMeters/2);
 
+        public static final double joystickSlewRateLimit = 1.0 / 0.25;     // full speed in 0.25 sec
         public static final double driveJoystickDeadbandPercent = 0.12;
         public static final double driveMaxJerk = 200.0;
 
