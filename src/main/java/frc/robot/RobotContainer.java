@@ -27,6 +27,7 @@ import frc.robot.subsystems.drive.ModuleIOFalcon500;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.SwerveJoysticks;
 import frc.robot.subsystems.leds.LEDFrameworkSystem;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
 import frc.robot.util.led.functions.Gradient;
@@ -40,13 +41,13 @@ import frc.robot.util.led.functions.Gradient;
  */
 public class RobotContainer {
     // Subsystems
+    @SuppressWarnings("unused")
     private final Drive drive;
+    private final Vision vision = new Vision();
+    private final LEDFrameworkSystem ledSystem;
 
     // Controller
     private final CommandXboxController driveController = new CommandXboxController(0);
-
-    // LEDs
-    private final LEDFrameworkSystem ledSystem;
 
     // Dashboard inputs
     private final LoggedDashboardChooser<AutoRoutine> autoChooser = new LoggedDashboardChooser<>("Auto Routine");

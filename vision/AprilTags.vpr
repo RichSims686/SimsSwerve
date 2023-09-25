@@ -42,7 +42,7 @@ fiducial_locfilters:
 fiducial_method:sqpnp
 fiducial_qualitythreshold:2
 fiducial_refine:1
-fiducial_resdiv:2
+fiducial_resdiv:4
 fiducial_size:165.1
 fiducial_skip3d:0
 fiducial_type:aprilClassic36h11
@@ -56,13 +56,13 @@ image_source:0
 img_to_show:0
 intersection_filter:0
 invert_hue:0
-lcgain:6.000000
+lcgain:15
 multigroup_max:7
 multigroup_min:1
 multigroup_rejector:0
 pipeline_led_enabled:0
 pipeline_led_power:100
-pipeline_res:0
+pipeline_res:1
 pipeline_type:3
 red_balance:1200
 roi_x:0.000000

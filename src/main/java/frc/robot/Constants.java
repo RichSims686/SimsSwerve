@@ -125,23 +125,31 @@ public final class Constants {
     public static final class VisionConstants {
 
         public static final String[] cameraNames = {
-            "FrontLeft", 
-            "FrontRight", 
-            "BackLeft", 
-            "BackRight",
-            "Limelight"
+            "FrontLeft",    // OV2311
+            "FrontRight",   // AR0144
+            "BackLeft",     // OV9281
+            "BackRight",    // OV9281
+            "limelight"
         };
 
-        // TODO: update camera names to above
-        // TODO: update camera position, orientation
         // TODO: update Limelight webUI with camera position, AprilTags field locations
-        // TODO: update Limelight settings per docs
-        public static final Transform3d[] vehicleToCameras = {
-            new Transform3d(new Translation3d(0.03, 0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(-10))),
-            new Transform3d(new Translation3d(0.03, -0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(10))),
-            new Transform3d(new Translation3d(-0.03, 0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(-175))),
-            new Transform3d(new Translation3d(-0.03, -0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(175))),
-            new Transform3d(new Translation3d(-0.03, -0.146, 0), new Rotation3d(0, Units.degreesToRadians(-5), Units.degreesToRadians(175)))
+
+        private static final double photonCamX = Units.inchesToMeters(10.375/2);
+        private static final double photonCamY = Units.inchesToMeters(10.00/2);
+        private static final double photonCamZ = Units.inchesToMeters(8.5);
+        private static final double photonCamPitch = Units.degreesToRadians(15.0);
+
+        private static final double limelightCamX = Units.inchesToMeters(18.25/2 - 3.25);
+        private static final double limelightCamY = Units.inchesToMeters(0);
+        private static final double limelightCamZ = Units.inchesToMeters(7.875);
+        private static final double limelightCamPitch = Units.degreesToRadians(5.0);
+
+        public static final Transform3d[] robotToCameras = {
+            new Transform3d(new Translation3d(-photonCamX, +photonCamY, photonCamZ), new Rotation3d(Units.degreesToRadians(+0.90), photonCamPitch, Units.degreesToRadians(-0.25))),
+            new Transform3d(new Translation3d(-photonCamX, -photonCamY, photonCamZ), new Rotation3d(0, photonCamPitch, Units.degreesToRadians(-0.85))),
+            new Transform3d(new Translation3d(+photonCamX, +photonCamY, photonCamZ), new Rotation3d(0, photonCamPitch, Units.degreesToRadians(180.0 - 1.48))),
+            new Transform3d(new Translation3d(+photonCamX, -photonCamY, photonCamZ), new Rotation3d(0, photonCamPitch, Units.degreesToRadians(180.0 - 0.40))),
+            new Transform3d(new Translation3d(limelightCamX, limelightCamY, limelightCamZ), new Rotation3d(0, limelightCamPitch, Units.degreesToRadians(-0.37)))
         };
 
         // TODO: figure out vision stdDevs

@@ -28,7 +28,7 @@ public class RobotState {
     }    
 
     private SwerveDrivePoseEstimator poseEstimator;
-    private Field2d field;
+    private Field2d field = new Field2d();
 
     public void initializePoseEstimator(      
             SwerveDriveKinematics kinematics,

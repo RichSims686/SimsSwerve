@@ -1,16 +1,20 @@
 package frc.robot.subsystems.vision;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.RobotState;
 
@@ -24,7 +28,16 @@ public class AprilTagCameraIOPhotonVision implements AprilTagCameraIO {
 
         try {
             // Attempt to load the AprilTagFieldLayout that will tell us where the tags are on the field.
-            AprilTagFieldLayout fieldLayout = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField();
+            String resourceFile = Filesystem.getDeployDirectory() + "/apriltags/sims-basement.json";            
+            AprilTagFieldLayout fieldLayout = new AprilTagFieldLayout(resourceFile);
+
+            // test that I made the JSON file correctly
+            // List<AprilTag> tags = fieldLayout.getTags();
+            // for (AprilTag tag : tags) {
+            //     System.out.println(tag);
+            //     System.out.println(tag.pose.getRotation().toRotation2d());
+            // }
+
             photonPoseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP, camera, robotToCamera);
             photonPoseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
         } catch (IOException e) {
