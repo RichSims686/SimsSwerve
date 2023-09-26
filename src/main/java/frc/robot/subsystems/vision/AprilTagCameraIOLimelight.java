@@ -38,7 +38,7 @@ public class AprilTagCameraIOLimelight implements AprilTagCameraIO {
         } else {
             inputs.visionPose = Optional.of(result.getBotPose3d_wpiRed());
         }
-        double latencySeconds = (result.latency_capture / 1000.0) - (result.latency_pipeline / 1000.0) - (result.latency_jsonParse / 1000.0);
+        double latencySeconds = (result.latency_capture + result.latency_pipeline + result.latency_jsonParse) / 1000.0;
         inputs.timestamp = Timer.getFPGATimestamp() - latencySeconds;
     }
 }
