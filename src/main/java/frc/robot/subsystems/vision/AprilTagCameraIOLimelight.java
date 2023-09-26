@@ -15,6 +15,7 @@ public class AprilTagCameraIOLimelight implements AprilTagCameraIO {
         // Important: need to configure AprilTag field map using Limelight webUI
         // https://docs.limelightvision.io/en/latest/apriltags_in_3d.html#robot-localization-botpose-and-megatag
         this.cameraName = cameraName;
+        LimelightHelpers.setPipelineIndex(cameraName, 1);
     }
 
     public void updateInputs(AprilTagCameraIOInputs inputs) {
