@@ -19,10 +19,10 @@ public class ModuleIOSim implements ModuleIO {
     private boolean zeroEncodersFlag = false;
 
     public void updateInputs(ModuleIOInputs inputs) {
-        driveSim.update(Constants.loopPeriodSecs);
-        turnSim.update(Constants.loopPeriodSecs);
+        driveSim.update(Constants.dtSeconds);
+        turnSim.update(Constants.dtSeconds);
     
-        double angleDiffRad = turnSim.getAngularVelocityRadPerSec() * Constants.loopPeriodSecs;
+        double angleDiffRad = turnSim.getAngularVelocityRadPerSec() * Constants.dtSeconds;
         turnRelativePositionRad += angleDiffRad;
         turnAbsolutePositionRad += angleDiffRad;
         turnAbsolutePositionRad = MathUtil.angleModulus(turnAbsolutePositionRad);
@@ -34,7 +34,7 @@ public class ModuleIOSim implements ModuleIO {
           zeroEncodersFlag = false;
         }
         
-        inputs.drivePositionRad = inputs.drivePositionRad + (driveSim.getAngularVelocityRadPerSec() * Constants.loopPeriodSecs);
+        inputs.drivePositionRad = inputs.drivePositionRad + (driveSim.getAngularVelocityRadPerSec() * Constants.dtSeconds);
         inputs.driveVelocityRadPerSec = driveSim.getAngularVelocityRadPerSec();
         inputs.driveAppliedVolts = driveAppliedVolts;
         inputs.driveCurrentAmps = Math.abs(driveSim.getCurrentDrawAmps());
