@@ -34,8 +34,8 @@ public class Module {
     private static final LoggedTunableNumber turnKd = new LoggedTunableNumber("Drive/Module/TurnKd");
 
     private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.0, 0.0);
-    private final PIDController driveFeedback = new PIDController(0.0, 0.0, 0.0, Constants.loopPeriodSecs);
-    private final PIDController turnFeedback = new PIDController(0.0, 0.0, 0.0, Constants.loopPeriodSecs);
+    private final PIDController driveFeedback = new PIDController(0.0, 0.0, 0.0, Constants.dtSeconds);
+    private final PIDController turnFeedback = new PIDController(0.0, 0.0, 0.0, Constants.dtSeconds);
 
     static {
         wheelRadius.initDefault(Constants.DriveConstants.wheelRadiusMeters);

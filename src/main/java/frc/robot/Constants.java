@@ -6,8 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
@@ -20,8 +18,8 @@ public final class Constants {
     ;
     public static final boolean tuningMode = true;    
 
-    public static final double loopPeriodSecs = 0.02;
-    public static final double loopFrequencyHz = 1.0/loopPeriodSecs;
+    public static final double dtSeconds = 0.02;
+    public static final double loopFrequencyHz = 1.0/dtSeconds;
     
     public static final class CANDevices {
 
