@@ -18,6 +18,8 @@ import frc.robot.commands.BasicDriveAutos;
 import frc.robot.commands.DriveInSquare;
 import frc.robot.commands.DriveStraightTrajectory;
 import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.commands.DriveWithJoysticksCardinal;
+import frc.robot.commands.DriveWithPreciseFlick;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.robot.subsystems.drive.Drive;
@@ -130,6 +132,19 @@ public class RobotContainer {
 
     private void configureSubsystems() {
 
+        drive.setDefaultCommand(new DriveWithJoysticks(
+            drive,
+            SwerveJoysticks.process(
+                () -> -driveController.getLeftY(),  // forward is field +x axis
+                () -> -driveController.getLeftX(),  //   right is field +y axis
+                () -> -driveController.getRightX(), // turn axis
+                true,           // squareLinearInputs
+                true,             // squareTurnInputs    
+                DriveConstants.joystickSlewRateLimit
+        ),                                  
+            () -> !driveController.getHID().getRightBumper(),   // field relative controls
+            () -> driveController.getHID().getLeftBumper()      // precision speed
+        ));
         // drive.setDefaultCommand(new DriveWithJoysticks(
         //     drive,
         //     SwerveJoysticks.process(
@@ -161,24 +176,24 @@ public class RobotContainer {
         //     () -> driveController.getHID().getLeftBumper()    // precision speed
         // ));
 
-        drive.setDefaultCommand(new DriveWithPreciseFlick(
-            drive, 
-            SwerveJoysticks.process(
-                () -> -driveController.getLeftX(),
-                () -> -driveController.getLeftY(),
-                () -> -driveController.getRightX(),
-                true,
-                false,
-                DriveConstants.joystickSlewRateLimit
-            ),  
-            DriveWithPreciseFlick.headingFromJoystick(
-                () -> -driveController.getRightX(), 
-                () -> -driveController.getRightY(), 
-                15, 
-                0.5
-            ), 
-            () -> driveController.getHID().getLeftBumper()
-        ));
+        // drive.setDefaultCommand(new DriveWithPreciseFlick(
+        //     drive, 
+        //     SwerveJoysticks.process(
+        //         () -> -driveController.getLeftX(),
+        //         () -> -driveController.getLeftY(),
+        //         () -> -driveController.getRightX(),
+        //         true,
+        //         false,
+        //         DriveConstants.joystickSlewRateLimit
+        //     ),  
+        //     DriveWithPreciseFlick.headingFromJoystick(
+        //         () -> -driveController.getRightX(), 
+        //         () -> -driveController.getRightY(), 
+        //         15, 
+        //         0.5
+        //     ), 
+        //     () -> driveController.getHID().getLeftBumper()
+        // ));
     }
 
 
