@@ -61,9 +61,34 @@ public final class Constants {
     }
     
     public static final class DriveConstants {
-        public static int numDriveModules = 4;
+
+        public static int numDriveModules = DriveModulePosition.values().length;
+        
         public static enum DriveModulePosition {
-            FRONT_LEFT, FRONT_RIGHT, BACK_LEFT, BACK_RIGHT
+            FRONT_LEFT  (CANDevices.frontLeftDriveMotorID, CANDevices.frontLeftTurnMotorID, CANDevices.frontLeftTurnEncoderID, InvertedValue.CounterClockwise_Positive,
+            0.139160),
+            FRONT_RIGHT (CANDevices.frontLeftDriveMotorID, CANDevices.frontLeftTurnMotorID, CANDevices.frontLeftTurnEncoderID, InvertedValue.Clockwise_Positive,
+            0.315430),
+            BACK_LEFT   (CANDevices.frontLeftDriveMotorID, CANDevices.frontLeftTurnMotorID, CANDevices.frontLeftTurnEncoderID, InvertedValue.CounterClockwise_Positive,
+            0.178467),
+            BACK_RIGHT  (CANDevices.frontLeftDriveMotorID, CANDevices.frontLeftTurnMotorID, CANDevices.frontLeftTurnEncoderID, InvertedValue.Clockwise_Positive,
+            0.177490);
+
+            public final int driveMotorID;
+            public final int turnMotorID;
+            public final int turnEncoderID;
+            // motor direction to drive 'forward' (cancoders at angles given in cancoderOffsetRotations)
+            public final InvertedValue driveInverted;
+            // absolute position of cancoder when drive wheel is facing 'forward'
+            public final double cancoderOffsetRotations;
+
+            DriveModulePosition(int driveMotorID, int turnMotorID, int turnEncoderID, InvertedValue driveInverted, double cancoderOffsetRotations) {
+                this.driveMotorID = driveMotorID;
+                this.turnMotorID = turnMotorID;
+                this.turnEncoderID = turnEncoderID;
+                this.driveInverted = driveInverted;
+                this.cancoderOffsetRotations = cancoderOffsetRotations;
+            }
         }
 
         // weight with battery and bumpers
@@ -76,21 +101,6 @@ public final class Constants {
         public static final double driveWheelGearReduction = 1.0 / ((15.0/60.0)*(28.0/16.0)*(14.0/50.0));
         public static final double turnWheelGearReduction = 1.0 / ((15.0/32.0)*(10.0/60.0));
 
-        // absolute position of cancoder when drive wheel is facing 'forward'
-        public static final double[] cancoderOffsetRotations = {
-            0.139160,  // front left
-            0.315430,  // front right
-            0.178467,  // back left
-            0.177490,  // back right
-        };
-
-        // motor direction to drive 'forward' (cancoders at angles given in cancoderOffsetRotations)
-        public static final InvertedValue[] driveInverted = {
-            InvertedValue.CounterClockwise_Positive,    // front left
-            InvertedValue.Clockwise_Positive,           // front right
-            InvertedValue.CounterClockwise_Positive,    // back left
-            InvertedValue.Clockwise_Positive,           // back right
-        };
         
         public static final double[] driveRealKps = {0.7, 0.4, 0.7, 0.7};
         public static final double[] driveRealKds = {3.5, 2.5, 3.7, 3.5};

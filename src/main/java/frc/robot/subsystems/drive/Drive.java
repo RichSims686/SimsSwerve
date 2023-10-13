@@ -55,10 +55,10 @@ public class Drive extends SubsystemBase {
 
     public Drive(GyroIO gyroIO, ModuleIO flModuleIO, ModuleIO frModuleIO, ModuleIO blModuleIO, ModuleIO brModuleIO) {
         this.gyroIO = gyroIO;
-        modules[DriveModulePosition.FRONT_LEFT.ordinal()] = new Module(flModuleIO, DriveModulePosition.FRONT_LEFT.ordinal());
-        modules[DriveModulePosition.FRONT_RIGHT.ordinal()] = new Module(frModuleIO, DriveModulePosition.FRONT_RIGHT.ordinal());
-        modules[DriveModulePosition.BACK_LEFT.ordinal()] = new Module(blModuleIO, DriveModulePosition.BACK_LEFT.ordinal());
-        modules[DriveModulePosition.BACK_RIGHT.ordinal()] = new Module(brModuleIO, DriveModulePosition.BACK_RIGHT.ordinal());
+        ModuleIO[] moduleIOs = new ModuleIO[]{flModuleIO, frModuleIO, blModuleIO, brModuleIO};
+        for(DriveModulePosition position : DriveModulePosition.values()) {
+            modules[position.ordinal()] = new Module(moduleIOs[position.ordinal()], position.ordinal());
+        }
         lastMovementTimer.start();
         for (var module : modules) {
             module.setBrakeMode(false);
