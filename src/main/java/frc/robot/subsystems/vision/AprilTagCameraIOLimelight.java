@@ -33,6 +33,15 @@ public class AprilTagCameraIOLimelight implements AprilTagCameraIO {
         if (!inputs.isConnected) 
             return;
 
+        if (!result.valid) {
+            return;
+        }
+
+        // TODO: result.valid always returns true.  Use 'tv' from NetworkTables.  There is a small chance that the JSON and NT will be out of sync
+        if (!LimelightHelpers.getTV(cameraName)) {
+            return;
+        }
+
         if (DriverStation.getAlliance() == Alliance.Blue) {
             inputs.visionPose = Optional.of(result.getBotPose3d_wpiBlue());
         } else {

@@ -17,8 +17,20 @@ public final class Constants {
         REAL, SIM, REPLAY
     }
 
-    public static final Mode mode = Mode.SIM;
-    ;
+    public static enum Field {
+        BASEMENT (2.0),
+        PRACTICE (4.0);
+
+        private final double maxFieldSpeedMetersPerSec;
+
+        private Field(double maxSpeed) {
+            this.maxFieldSpeedMetersPerSec = maxSpeed;
+        }
+    }
+
+    public static final Mode mode = Mode.REAL;
+    public static final Field field = Field.BASEMENT;
+
     public static final boolean tuningMode = true;    
 
     public static final double dtSeconds = 0.02;
@@ -99,8 +111,7 @@ public final class Constants {
         public static final double driveSnapKi = 0;
         public static final double driveSnapKd = 0;
 
-
-        public static final double maxDriveSpeedMetersPerSec = 4;
+        public static final double maxDriveSpeedMetersPerSec = field.maxFieldSpeedMetersPerSec;
         // tangential speed (m/s) = radial speed (rad/s) * radius (m)  
         public static final double maxTurnRateRadiansPerSec = maxDriveSpeedMetersPerSec / Math.hypot(trackWidthXMeters/2, trackWidthYMeters/2);
 
@@ -153,11 +164,11 @@ public final class Constants {
             new Transform3d(new Translation3d(limelightCamX, limelightCamY, limelightCamZ), new Rotation3d(0, limelightCamPitch, Units.degreesToRadians(-0.37)))
         };
 
-        // TODO: figure out vision stdDevs
-        public static final double singleTagAmbiguityCutoff = 0.05;
-        public static final double minimumStdDev = 0.5;
-        public static final double stdDevEulerMultiplier = 0.3;
-        public static final double stdDevDistanceMultiplier = 0.4;
+        // linear regression (in distanceMeters^2) of empirically measured data 
+        public static final double k1XYStdDev = 0.03;
+        public static final double k0XYStdDev = 0;
+        public static final double k1HeadingStdDev = 0;
+        public static final double k0HeadingStdDev = 0.003;
     }
 
     public static final class AutoConstants {
@@ -200,35 +211,7 @@ public final class Constants {
     }
 
 
-   // public static final class LEDConstants {
-
-    //     // Ports
-    //     public static final int ledPort = 0;
-
-    //     // LED Data
-    //     public static final int armLedCount = 123;
-    //     public static final int baseLedCount = 128;
-
-    //     // Rainbow
-    //     public static final boolean dynamicRainbow = true;
-    //     public static final int dynamicRainbowSpeed = 1;
-
-    //     // Pre-Match Climb Pattern
-    //     public static final int climbSpeed = 2;
-    //     public static final int climbMaxDelay = 40;
-    //     public static final int climbMinDelay = 20;
-    //     public static final int climbMaxLength = 10;
-    //     public static final int climbMinLength = 5;
-
-    //     // Other
-    //     public static final Color activeSideFlashColor = new Color(0, 0, 0);
-    //     public static final Color intakeFlashColor = new Color(255, 255, 255);
-    //     public static final Color whistleFlashColor = new Color(255, 179, 0);
-
-    // }
-    
-    
-
+   
     // Not the robot main function. This is called by Gradle when deploying to
     // make sure nobody deploys sim code. 
     // Stolen from 6328 ;-)

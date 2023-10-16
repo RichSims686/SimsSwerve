@@ -1,5 +1,5 @@
 {
-  "version": "2.2.2",
+  "version": "2.3.0",
   "layout": [
     {
       "type": 1,
@@ -100,11 +100,37 @@
       "type": 6,
       "fields": [],
       "listFields": [
-        [],
+        [
+          {
+            "type": "Ghost",
+            "key": "NT:/AdvantageKit/Vision/Camera/FrontLeft/visionPose",
+            "fieldTypeIndex": 0
+          },
+          {
+            "type": "Ghost",
+            "key": "NT:/AdvantageKit/Vision/Camera/FrontRight/visionPose",
+            "fieldTypeIndex": 0
+          },
+          {
+            "type": "Ghost",
+            "key": "NT:/AdvantageKit/Vision/Camera/BackLeft/visionPose",
+            "fieldTypeIndex": 0
+          },
+          {
+            "type": "Ghost",
+            "key": "NT:/AdvantageKit/Vision/Camera/BackRight/visionPose",
+            "fieldTypeIndex": 0
+          },
+          {
+            "type": "Ghost",
+            "key": "NT:/AdvantageKit/Vision/Camera/limelight/visionPose",
+            "fieldTypeIndex": 0
+          }
+        ],
         [
           {
             "type": "Robot",
-            "key": "/AdvantageKit/RealOutputs/Odometry/Robot",
+            "key": "NT:/AdvantageKit/RealOutputs/Odometry/Robot",
             "fieldTypeIndex": 0
           }
         ]
