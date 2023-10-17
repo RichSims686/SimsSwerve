@@ -1,17 +1,20 @@
 clear all;
 clc;
 
-tag(1).translationInches =   [0.0, 190.0, 28.25]; % x, y, z
-tag(1).rotationYPRRadians   =   [0.0, 0.0, 0.0];     % roll, pitch, yaw
+fieldLength = 651.25 *2.54/100;
+fieldWidth =  315.5 *2.54/100;
 
-tag(2).translationInches =   [212.5, 210.0, 28.25]; % x, y, z
+tag(1).translationInches =   [+85.25, +24.00, 30.25]; % x, y, z
+tag(1).rotationYPRRadians   =   [0.0, 0.0, pi];     % roll, pitch, yaw
+
+tag(2).translationInches =   [+85.25, -24.00, 30.25]; % x, y, z
 tag(2).rotationYPRRadians   =   [0.0, 0.0, pi];     % roll, pitch, yaw
 
-tag(3).translationInches =   [230.0, 60.0 30.25]; % x, y, z
-tag(3).rotationYPRRadians   =   [0.0, 0.0, pi];     % roll, pitch, yaw
+tag(3).translationInches =   [-85.25, -23.00, 28.25]; % x, y, z
+tag(3).rotationYPRRadians   =   [0.0, 0.0, 0.0];     % roll, pitch, yaw
 
-tag(4).translationInches =   [155.0, 3.0, 28.25]; % x, y, z
-tag(4).rotationYPRRadians   =   [0.0, 0.0, pi/2];     % roll, pitch, yaw
+tag(4).translationInches =   [-85.25, +25.00, 29.00]; % x, y, z
+tag(4).rotationYPRRadians   =   [0.0, 0.0, 0.0];     % roll, pitch, yaw
 
 for k=1:numel(tag)
     tag(k).translationMeters = tag(k).translationInches * 2.54/100;
@@ -40,8 +43,8 @@ for k=1:numel(tag)
     Z = cr * cp * sy - sr * sp * cy;
 
     tags(k).ID = k;
-    tags(k).pose.translation.x = tag(k).translationMeters(1);
-    tags(k).pose.translation.y = tag(k).translationMeters(2);
+    tags(k).pose.translation.x = tag(k).translationMeters(1) + fieldLength/2;
+    tags(k).pose.translation.y = tag(k).translationMeters(2) + fieldWidth/2;
     tags(k).pose.translation.z = tag(k).translationMeters(3);
     tags(k).pose.rotation.quaternion.W = W;
     tags(k).pose.rotation.quaternion.X = X;
@@ -50,8 +53,8 @@ for k=1:numel(tag)
 end
 s.tags = tags;
 
-s.field.length = 6.0;
-s.field.width  = 5.5;
+s.field.length = fieldLength;
+s.field.width  = fieldWidth;
 
 photonvision = jsonencode(s, 'PrettyPrint', true);
 fid = fopen('sims-basement.json', 'wt');
