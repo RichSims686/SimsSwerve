@@ -79,11 +79,11 @@ public final class Constants {
         public static enum DriveModulePosition {
             FRONT_LEFT  (CANDevices.frontLeftDriveMotorID, CANDevices.frontLeftTurnMotorID, CANDevices.frontLeftTurnEncoderID, InvertedValue.CounterClockwise_Positive,
             0.139160),
-            FRONT_RIGHT (CANDevices.frontLeftDriveMotorID, CANDevices.frontLeftTurnMotorID, CANDevices.frontLeftTurnEncoderID, InvertedValue.Clockwise_Positive,
+            FRONT_RIGHT (CANDevices.frontRightDriveMotorID, CANDevices.frontRightTurnMotorID, CANDevices.frontRightTurnEncoderID, InvertedValue.Clockwise_Positive,
             0.315430),
-            BACK_LEFT   (CANDevices.frontLeftDriveMotorID, CANDevices.frontLeftTurnMotorID, CANDevices.frontLeftTurnEncoderID, InvertedValue.CounterClockwise_Positive,
+            BACK_LEFT   (CANDevices.backLeftDriveMotorID, CANDevices.backLeftTurnMotorID, CANDevices.backLeftTurnEncoderID, InvertedValue.CounterClockwise_Positive,
             0.178467),
-            BACK_RIGHT  (CANDevices.frontLeftDriveMotorID, CANDevices.frontLeftTurnMotorID, CANDevices.frontLeftTurnEncoderID, InvertedValue.Clockwise_Positive,
+            BACK_RIGHT  (CANDevices.backRightDriveMotorID, CANDevices.backRightTurnMotorID, CANDevices.backRightTurnEncoderID, InvertedValue.Clockwise_Positive,
             0.177490);
 
             public final int driveMotorID;

@@ -25,9 +25,9 @@ public class ModuleIOFalcon500 implements ModuleIO {
     private final InvertedValue driveInverted;
 
     public ModuleIOFalcon500(DriveModulePosition position) {
-        driveMotor = new TalonFX(CANDevices.frontLeftDriveMotorID, CANDevices.driveCanBusName);
-        turnMotor = new TalonFX(CANDevices.frontLeftTurnMotorID, CANDevices.driveCanBusName);
-        turnEncoder = new CANcoder(CANDevices.frontLeftTurnEncoderID, CANDevices.driveCanBusName);
+        driveMotor = new TalonFX(position.driveMotorID, CANDevices.driveCanBusName);
+        turnMotor = new TalonFX(position.turnMotorID, CANDevices.driveCanBusName);
+        turnEncoder = new CANcoder(position.turnEncoderID, CANDevices.driveCanBusName);
         driveInverted = position.driveInverted;
         initialOffsetRadians = Units.rotationsToRadians(position.cancoderOffsetRotations);
 
