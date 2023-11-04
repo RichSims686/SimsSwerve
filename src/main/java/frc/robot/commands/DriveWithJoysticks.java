@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -65,6 +66,8 @@ public class DriveWithJoysticks extends CommandBase {
         if (fieldRelative) {
             // field relative controls
             var driveRotation = drive.getRotation(); // angle from alliance wall normal
+            //2024Optional<Alliance> alliance = DriverStation.getAlliance();
+            //2024if (alliance.isPresent() && alliance.get() == Alliance.Red) {
             if (DriverStation.getAlliance() == Alliance.Red) {
                 driveRotation = driveRotation.rotateBy(new Rotation2d(Math.PI));
             }

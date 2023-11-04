@@ -159,12 +159,12 @@ public final class Constants {
         private static final double photonCamX = Units.inchesToMeters(10.375/2);
         private static final double photonCamY = Units.inchesToMeters(10.00/2);
         private static final double photonCamZ = Units.inchesToMeters(8.5);
-        private static final double photonCamPitch = Units.degreesToRadians(15.0);
+        private static final double photonCamPitch = -Units.degreesToRadians(-15.0);    // NWU: negative pitch is up
 
         private static final double limelightCamX = Units.inchesToMeters(18.25/2 - 3.25);
         private static final double limelightCamY = Units.inchesToMeters(0);
         private static final double limelightCamZ = Units.inchesToMeters(7.875);
-        private static final double limelightCamPitch = Units.degreesToRadians(5.0);
+        private static final double limelightCamPitch = Units.degreesToRadians(-5.0);   // NWU: negative pitch is up
 
         public static final Transform3d[] robotToCameras = {
             new Transform3d(new Translation3d(-photonCamX, +photonCamY, photonCamZ), new Rotation3d(Units.degreesToRadians(+0.90), photonCamPitch, Units.degreesToRadians(-0.25))),
@@ -178,7 +178,10 @@ public final class Constants {
         public static final double k1XYStdDev = 0.03;
         public static final double k0XYStdDev = 0;
         public static final double k1HeadingStdDev = 0;
-        public static final double k0HeadingStdDev = 0.003;
+        public static final double k0HeadingStdDevDisabled = 0.003; // low std dev when finding field/gyro offset (only while disabled)
+        public static final double k0HeadingStdDev = 1000;          // high std dev when enabled, trusting the stability of the gyro
+ 
+        public static final int demoTagId = 5;
     }
 
     public static final class AutoConstants {

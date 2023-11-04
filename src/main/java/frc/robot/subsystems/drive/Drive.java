@@ -55,8 +55,8 @@ public class Drive extends SubsystemBase {
 
     public Drive(GyroIO gyroIO, ModuleIO flModuleIO, ModuleIO frModuleIO, ModuleIO blModuleIO, ModuleIO brModuleIO) {
         this.gyroIO = gyroIO;
-        ModuleIO[] moduleIOs = new ModuleIO[]{flModuleIO, frModuleIO, blModuleIO, brModuleIO};
-        for(DriveModulePosition position : DriveModulePosition.values()) {
+        ModuleIO[] moduleIOs = new ModuleIO[] { flModuleIO, frModuleIO, blModuleIO, brModuleIO };
+        for (DriveModulePosition position : DriveModulePosition.values()) {
             modules[position.ordinal()] = new Module(moduleIOs[position.ordinal()], position.ordinal());
         }
         lastMovementTimer.start();
@@ -66,7 +66,8 @@ public class Drive extends SubsystemBase {
 
         // initialize pose estimator
         Pose2d initialPoseMeters = new Pose2d();
-        RobotState.getInstance().initializePoseEstimator(kinematics, getGyroRotation(), getModulePositions(), initialPoseMeters);
+        RobotState.getInstance().initializePoseEstimator(kinematics, getGyroRotation(), getModulePositions(),
+                initialPoseMeters);
         prevGyroYaw = getPose().getRotation();
     }
 
@@ -178,27 +179,33 @@ public class Drive extends SubsystemBase {
     /**
      * Discretizes a continuous-time chassis speed.
      *
-     * <p>This function converts a continous-time chassis speed into a discrete-time one such that
-     * when the discrete-time chassis speed is applied for one timestep, the robot moves as if the
-     * velocity components are independent (i.e., the robot moves v_x * dt along the x-axis, v_y * dt
+     * <p>
+     * This function converts a continous-time chassis speed into a discrete-time
+     * one such that
+     * when the discrete-time chassis speed is applied for one timestep, the robot
+     * moves as if the
+     * velocity components are independent (i.e., the robot moves v_x * dt along the
+     * x-axis, v_y * dt
      * along the y-axis, and omega * dt around the z-axis).
      *
-     * <p>This is useful for compensating for translational skew when translating and rotating a
+     * <p>
+     * This is useful for compensating for translational skew when translating and
+     * rotating a
      * swerve drivetrain.
      *
-     * @param vxMetersPerSecond Forward velocity.
-     * @param vyMetersPerSecond Sideways velocity.
+     * @param vxMetersPerSecond     Forward velocity.
+     * @param vyMetersPerSecond     Sideways velocity.
      * @param omegaRadiansPerSecond Angular velocity.
-     * @param dtSeconds The duration of the timestep the speeds should be applied for.
+     * @param dtSeconds             The duration of the timestep the speeds should
+     *                              be applied for.
      * @return Discretized ChassisSpeeds.
      */
     public static ChassisSpeeds ChassisSpeedsdiscretize(
-        double vxMetersPerSecond,
-        double vyMetersPerSecond,
-        double omegaRadiansPerSecond,
-        double dtSeconds) {
-        var desiredDeltaPose =
-            new Pose2d(
+            double vxMetersPerSecond,
+            double vyMetersPerSecond,
+            double omegaRadiansPerSecond,
+            double dtSeconds) {
+        var desiredDeltaPose = new Pose2d(
                 vxMetersPerSecond * dtSeconds,
                 vyMetersPerSecond * dtSeconds,
                 new Rotation2d(omegaRadiansPerSecond * dtSeconds));
@@ -209,27 +216,32 @@ public class Drive extends SubsystemBase {
     /**
      * Discretizes a continuous-time chassis speed.
      *
-     * <p>This function converts a continous-time chassis speed into a discrete-time one such that
-     * when the discrete-time chassis speed is applied for one timestep, the robot moves as if the
-     * velocity components are independent (i.e., the robot moves v_x * dt along the x-axis, v_y * dt
+     * <p>
+     * This function converts a continous-time chassis speed into a discrete-time
+     * one such that
+     * when the discrete-time chassis speed is applied for one timestep, the robot
+     * moves as if the
+     * velocity components are independent (i.e., the robot moves v_x * dt along the
+     * x-axis, v_y * dt
      * along the y-axis, and omega * dt around the z-axis).
      *
-     * <p>This is useful for compensating for translational skew when translating and rotating a
+     * <p>
+     * This is useful for compensating for translational skew when translating and
+     * rotating a
      * swerve drivetrain.
      *
      * @param continuousSpeeds The continuous speeds.
-     * @param dtSeconds The duration of the timestep the speeds should be applied for.
+     * @param dtSeconds        The duration of the timestep the speeds should be
+     *                         applied for.
      * @return Discretized ChassisSpeeds.
      */
     public static ChassisSpeeds ChassisSpeedsdiscretize(ChassisSpeeds continuousSpeeds, double dtSeconds) {
         return ChassisSpeedsdiscretize(
-            continuousSpeeds.vxMetersPerSecond,
-            continuousSpeeds.vyMetersPerSecond,
-            continuousSpeeds.omegaRadiansPerSecond,
-            dtSeconds);
-    }    
-
-
+                continuousSpeeds.vxMetersPerSecond,
+                continuousSpeeds.vyMetersPerSecond,
+                continuousSpeeds.omegaRadiansPerSecond,
+                dtSeconds);
+    }
 
     /**
      * Runs the drive at the desired velocity.
@@ -314,6 +326,11 @@ public class Drive extends SubsystemBase {
         return new Rotation2d(gyroInputs.rollPositionRad);
     }
 
+    /** Returns the current yaw velocity (Z rotation) in radians per second. */
+    public double getYawVelocity() {
+        return gyroInputs.yawVelocityRadPerSec;
+    }
+
     /** Returns the current pitch velocity (Y rotation) in radians per second. */
     public double getPitchVelocity() {
         return gyroInputs.pitchVelocityRadPerSec;
@@ -347,10 +364,14 @@ public class Drive extends SubsystemBase {
     /** Returns an array of module translations. */
     public Translation2d[] getModuleTranslations() {
         Translation2d[] moduleTranslations = new Translation2d[DriveConstants.numDriveModules];
-        moduleTranslations[DriveModulePosition.FRONT_LEFT.ordinal()] =  new Translation2d( DriveConstants.trackWidthXMeters / 2.0,  DriveConstants.trackWidthYMeters / 2.0);
-        moduleTranslations[DriveModulePosition.FRONT_RIGHT.ordinal()] = new Translation2d( DriveConstants.trackWidthXMeters / 2.0, -DriveConstants.trackWidthYMeters / 2.0);
-        moduleTranslations[DriveModulePosition.BACK_LEFT.ordinal()] =   new Translation2d(-DriveConstants.trackWidthXMeters / 2.0,  DriveConstants.trackWidthYMeters / 2.0);
-        moduleTranslations[DriveModulePosition.BACK_RIGHT.ordinal()] =  new Translation2d(-DriveConstants.trackWidthXMeters / 2.0, -DriveConstants.trackWidthYMeters / 2.0);
+        moduleTranslations[DriveModulePosition.FRONT_LEFT.ordinal()] = new Translation2d(
+                DriveConstants.trackWidthXMeters / 2.0, DriveConstants.trackWidthYMeters / 2.0);
+        moduleTranslations[DriveModulePosition.FRONT_RIGHT.ordinal()] = new Translation2d(
+                DriveConstants.trackWidthXMeters / 2.0, -DriveConstants.trackWidthYMeters / 2.0);
+        moduleTranslations[DriveModulePosition.BACK_LEFT.ordinal()] = new Translation2d(
+                -DriveConstants.trackWidthXMeters / 2.0, DriveConstants.trackWidthYMeters / 2.0);
+        moduleTranslations[DriveModulePosition.BACK_RIGHT.ordinal()] = new Translation2d(
+                -DriveConstants.trackWidthXMeters / 2.0, -DriveConstants.trackWidthYMeters / 2.0);
         return moduleTranslations;
     }
 
@@ -415,7 +436,7 @@ public class Drive extends SubsystemBase {
     }
 
     // turn stick must exceed this threshold to change desired heading
-    private static final double cardinalStickThreshold = 0.5; 
+    private static final double cardinalStickThreshold = 0.5;
 
     // use joystick to select cardinal direction
     public static Optional<CardinalDirection> getCardinalDirectionFromJoystick(DoubleSupplier xSupplier,

@@ -7,6 +7,8 @@
 
 package frc.robot.util;
 
+import java.util.Optional;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -94,6 +96,8 @@ public class AllianceFlipUtil {
   }
 
   private static boolean shouldFlip() {
-    return DriverStation.getAlliance() == Alliance.Red;
+    //2024Optional<Alliance> alliance = DriverStation.getAlliance();
+    //2024return (alliance.isPresent() && (alliance.get() == Alliance.Red));
+    return (DriverStation.getAlliance() == Alliance.Red);
   }
 }

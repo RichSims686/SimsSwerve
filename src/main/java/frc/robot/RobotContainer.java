@@ -7,6 +7,8 @@ package frc.robot;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,11 +19,12 @@ import frc.robot.Constants.DriveConstants.DriveModulePosition;
 import frc.robot.commands.BasicDriveAutos;
 import frc.robot.commands.DriveInSquare;
 import frc.robot.commands.DriveStraightTrajectory;
+import frc.robot.commands.DriveToPose;
 import frc.robot.commands.DriveWithJoysticks;
-import frc.robot.commands.DriveWithJoysticksCardinal;
-import frc.robot.commands.DriveWithPreciseFlick;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
+import frc.robot.commands.FollowAprilTag;
+import frc.robot.subsystems.apriltagvision.AprilTagVision;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -30,7 +33,6 @@ import frc.robot.subsystems.drive.ModuleIOFalcon500;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.SwerveJoysticks;
 import frc.robot.subsystems.leds.LEDFrameworkSystem;
-import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.Alert;
 import frc.robot.util.Alert.AlertType;
 import frc.robot.util.led.functions.Gradient;
@@ -46,7 +48,7 @@ public class RobotContainer {
     // Subsystems
     @SuppressWarnings("unused")
     private final Drive drive;
-    private final Vision vision = new Vision();
+    private final AprilTagVision vision = new AprilTagVision();
     private final LEDFrameworkSystem ledSystem;
 
     // Controller
@@ -223,8 +225,11 @@ public class RobotContainer {
                 true,
                 new FeedForwardCharacterizationData("drive"),
                 drive::runCharacterizationVolts,
-                drive::getCharacterizationVelocity)));    
-    }
+                drive::getCharacterizationVelocity)));   
+                
+            autoChooser.addOption("DriveToPose Example", new AutoRoutine(AutoPosition.ORIGIN, new DriveToPose(drive, new Pose2d(new Translation2d(0.5, -0.5), new Rotation2d(+Math.PI/4)))));
+            autoChooser.addOption("Follow Tag Demo", new AutoRoutine(AutoPosition.ORIGIN, new FollowAprilTag(drive, vision)));
+        }
 
     private static class AutoRoutine {
         public final AutoPosition position;

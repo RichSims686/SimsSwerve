@@ -16,6 +16,9 @@ tag(3).rotationYPRRadians   =   [0.0, 0.0, 0.0];     % roll, pitch, yaw
 tag(4).translationInches =   [-85.25, +25.00, 29.00]; % x, y, z
 tag(4).rotationYPRRadians   =   [0.0, 0.0, 0.0];     % roll, pitch, yaw
 
+tag(5).translationInches =   [0,0,0]; % x, y, z
+tag(5).rotationYPRRadians   =   [0.0, 0.0, 0.0];     % roll, pitch, yaw
+
 for k=1:numel(tag)
     tag(k).translationMeters = tag(k).translationInches * 2.54/100;
 end

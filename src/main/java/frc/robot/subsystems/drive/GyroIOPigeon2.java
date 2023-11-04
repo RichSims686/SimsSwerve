@@ -32,6 +32,7 @@ public class GyroIOPigeon2 implements GyroIO {
   }
 
   public void updateInputs(GyroIOInputs inputs) {
+//2024    inputs.connected = pigeon.getYaw().getStatus().isOK();
     inputs.connected = pigeon.getYaw().getError().isOK();
   
     inputs.yawPositionRad =     Units.degreesToRadians( pigeon.getYaw().getValue());    // ccw+

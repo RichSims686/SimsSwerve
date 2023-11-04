@@ -1,7 +1,5 @@
 package frc.robot.subsystems.drive;
 
-import java.security.InvalidParameterException;
-
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -85,6 +83,7 @@ public class ModuleIOFalcon500 implements ModuleIO {
     }
 
     public void zeroEncoders() {
+        //2024 driveMotor.setPosition(0.0);
         driveMotor.setRotorPosition(0.0);
         turnEncoder.setPosition(turnEncoder.getAbsolutePosition().getValue());
     }

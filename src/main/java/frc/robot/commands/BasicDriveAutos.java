@@ -129,16 +129,62 @@ public class BasicDriveAutos {
     }
 
 
+//2024 code
+/*
+    // generates the TrapezoidProfileCommand for driveForwardAuto and driveBackwardAuto
+    private static Command DriveLinearCommand(double goalDistanceMeters, double maxSpeedMetersPerSec, double maxAccelMetersPerSec2, boolean forward, Drive drive) {
+        double velocityMult = forward ? +1 : -1;
+        Pose2d startPose = drive.getPose();
+        
+        return new TrapezoidProfileCommand(
+            // Limit the max acceleration and velocity
+            new TrapezoidProfile(new TrapezoidProfile.Constraints(maxSpeedMetersPerSec, maxAccelMetersPerSec2)), 
+            // Pipe the profile state to the drive
+            setpointState -> drive.driveVelocity(new ChassisSpeeds(setpointState.velocity * velocityMult, 0.0, 0.0)),
+            // End at desired position in meters with 0 velocity
+            () -> new TrapezoidProfile.State(goalDistanceMeters, 0),
+            () -> {
+                Pose2d currentPose = drive.getPose();
+                double currentDistance = currentPose.relativeTo(startPose).getX();
+                double currentSpeed = drive.getFieldVelocity().dx;
+                return new TrapezoidProfile.State(currentDistance, currentSpeed);
+            },
+            drive);
+    }
+
+
+    // generates the TrapezoidProfileCommand for spinCcwAuto and spinCwAuto
+    private static Command DriveRotateCommand(double goalTurnRadians, double maxSpeedRadPerSec, double maxAccelRadPerSec2, boolean ccw, Drive drive) {
+        double velocityMult = ccw ? +1 : -1;
+        double startHeading = drive.getPose().getRotation().getRadians();
+
+        return new TrapezoidProfileCommand(
+            // Limit the max acceleration and velocity
+            new TrapezoidProfile(new TrapezoidProfile.Constraints(maxSpeedRadPerSec, maxAccelRadPerSec2)), 
+            // Pipe the profile state to the drive
+            setpointState -> drive.driveVelocity(new ChassisSpeeds(0.0, 0.0, setpointState.velocity * velocityMult)),
+            // End at desired position in radians with 0 velocity
+            () -> new TrapezoidProfile.State(goalTurnRadians, 0),
+            () -> {
+                double currentHeading = drive.getPose().getRotation().getRadians();
+                double currentDistance = MathUtil.angleModulus(currentHeading - startHeading);
+                double currentSpeed = drive.getFieldVelocity().dtheta;
+                return new TrapezoidProfile.State(currentDistance, currentSpeed);
+            },
+            drive);
+    }
+*/
 
     // generates the TrapezoidProfileCommand for driveForwardAuto and driveBackwardAuto
-    private static Command DriveLinearCommand(double distanceMeters, double maxSpeedMetersPerSec, double maxAccelMetersPerSec2, boolean forward, Drive drive) {
+    private static Command DriveLinearCommand(double goalDistanceMeters, double maxSpeedMetersPerSec, double maxAccelMetersPerSec2, boolean forward, Drive drive) {
         double velocityMult = forward ? +1 : -1;
+        
         return new TrapezoidProfileCommand(
             new TrapezoidProfile(
                 // Limit the max acceleration and velocity
                 new TrapezoidProfile.Constraints(maxSpeedMetersPerSec, maxAccelMetersPerSec2),
-                // End at desired position in meters; implicitly starts at 0
-                new TrapezoidProfile.State(distanceMeters, 0)),
+                // End at desired position in meters with 0 velocity; implicitly starts at 0
+                new TrapezoidProfile.State(goalDistanceMeters, 0)),
             // Pipe the profile state to the drive
             setpointState -> drive.driveVelocity(new ChassisSpeeds(setpointState.velocity * velocityMult, 0.0, 0.0)),
             // Require the drive
@@ -147,16 +193,17 @@ public class BasicDriveAutos {
 
 
     // generates the TrapezoidProfileCommand for spinCcwAuto and spinCwAuto
-    private static Command DriveRotateCommand(double turnRadians, double maxSpeedRadPerSec, double maxAccelRadPerSec2, boolean ccw, Drive drive) {
+    private static Command DriveRotateCommand(double goalTurnRadians, double maxSpeedRadPerSec, double maxAccelRadPerSec2, boolean ccw, Drive drive) {
         double velocityMult = ccw ? +1 : -1;
+
         return new TrapezoidProfileCommand(
             new TrapezoidProfile(
                 // Limit the max acceleration and velocity
                 new TrapezoidProfile.Constraints(maxSpeedRadPerSec, maxAccelRadPerSec2),
-                // End at desired position in meters; implicitly starts at 0
-                new TrapezoidProfile.State(turnRadians, 0)),
+                // End at desired position in meters with 0 velocity; implicitly starts at 0
+                new TrapezoidProfile.State(goalTurnRadians, 0)),
             // Pipe the profile state to the drive
-            setpointState -> drive.driveVelocity(new ChassisSpeeds(0.0, 0.0, setpointState.velocity * velocityMult)),
+            setpointState -> drive.driveVelocity(new ChassisSpeeds(setpointState.velocity * velocityMult, 0.0, 0.0)),
             // Require the drive
             drive);
     }

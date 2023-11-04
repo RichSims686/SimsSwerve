@@ -1,11 +1,13 @@
-package frc.robot.subsystems.vision;
+package frc.robot.subsystems.apriltagvision;
 
 import java.io.IOException;
 import java.util.Optional;
 
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -18,9 +20,11 @@ public class AprilTagCameraIOPhotonVision implements AprilTagCameraIO {
 
     private final PhotonCamera camera;
     private PhotonPoseEstimator photonPoseEstimator;
+    private final  Transform3d robotToCamera;
 
     public AprilTagCameraIOPhotonVision(String cameraName, Transform3d robotToCamera) {
         camera = new PhotonCamera(cameraName);
+        this.robotToCamera = robotToCamera;
 
         try {
             // Attempt to load the AprilTagFieldLayout that will tell us where the tags are on the field.
@@ -46,20 +50,37 @@ public class AprilTagCameraIOPhotonVision implements AprilTagCameraIO {
 
     public void updateInputs(AprilTagCameraIOInputs inputs) {
         // set default values
+        inputs.robotToCamera = robotToCamera;
         inputs.isConnected = camera.isConnected();
         inputs.visionPose = Optional.empty();
         inputs.timestamp = Timer.getFPGATimestamp();
+        inputs.cameraToTargets.clear();
 
         if ((!inputs.isConnected) || (photonPoseEstimator == null)) {
             return;
         }
 
+        PhotonPipelineResult cameraResult = camera.getLatestResult();
         photonPoseEstimator.setReferencePose(RobotState.getInstance().getPose());
-        var optRobotPose = photonPoseEstimator.update();
+        Optional<EstimatedRobotPose> optRobotPose = photonPoseEstimator.update(cameraResult);
 
         if (optRobotPose.isPresent()) {
             inputs.visionPose = Optional.of(optRobotPose.get().estimatedPose);
             inputs.timestamp = optRobotPose.get().timestampSeconds;
+        }
+
+        // populate targets array
+        if (!cameraResult.hasTargets()) {
+            return;
+        }
+
+        for (var target : cameraResult.getTargets()) {
+            
+            inputs.cameraToTargets.add(
+                new AprilTagTarget(
+                    target.getFiducialId(), 
+                    target.getBestCameraToTarget(), 
+                    target.getPoseAmbiguity()));
         }
     }
 }

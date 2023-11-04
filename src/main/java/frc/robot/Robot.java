@@ -11,6 +11,8 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -31,54 +33,35 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
-    Logger logger = Logger.getInstance();
-
-    // Record metadata
-    logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
-    logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
-    logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-    logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
-    logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-    switch (BuildConstants.DIRTY) {
-      case 0:
-        logger.recordMetadata("GitDirty", "All changes committed");
-        break;
-      case 1:
-        logger.recordMetadata("GitDirty", "Uncomitted changes");
-        break;
-      default:
-        logger.recordMetadata("GitDirty", "Unknown");
-        break;
-    }
+    Logger.getInstance().recordMetadata("ProjectName", "SimsSwerve"); // Set a metadata value
 
     // Set up data receivers & replay source
     switch (Constants.mode) {
       // Running on a real robot, log to a USB stick
       case REAL:
-        logger.addDataReceiver(new WPILOGWriter("/media/sda1/"));
-        logger.addDataReceiver(new NT4Publisher());
+        Logger.getInstance().addDataReceiver(new WPILOGWriter("/U")); // Log to a USB stick
+        Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+        new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
         break;
 
       // Running a physics simulator, log to local folder
       case SIM:
-        logger.addDataReceiver(new WPILOGWriter(""));
-        logger.addDataReceiver(new NT4Publisher());
+        Logger.getInstance().addDataReceiver(new WPILOGWriter("")); // Log to local folder
+        Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
         break;
 
       // Replaying a log, set up replay source
       case REPLAY:
         setUseTiming(false); // Run as fast as possible
-        String logPath = LogFileUtil.findReplayLog();
-        logger.setReplaySource(new WPILOGReader(logPath));
-        logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+        String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+        Logger.getInstance().setReplaySource(new WPILOGReader(logPath)); // Read replay log
+        Logger.getInstance().addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
         break;
     }
 
-    // See http://bit.ly/3YIzFZ6 for more information on timestamps in AdvantageKit.
-    // Logger.getInstance().disableDeterministicTimestamps()
+    // Logger.getInstance().disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
+    Logger.getInstance().start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
 
-    // Start AdvantageKit logger
-    logger.start();
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
