@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -15,7 +15,7 @@ public class AprilTagVision extends SubsystemBase {
 
     private final AprilTagCamera[] cameras;
 
-    private static Optional<Transform3d> robotToTarget = Optional.empty();
+    private static Transform2d robotToTag = null;
     private static double lastDemoTagTimestamp = 0.0;
     private static final double demoTagPersistenceSeconds = 0.5;
 
@@ -37,9 +37,9 @@ public class AprilTagVision extends SubsystemBase {
             camera.periodic();
         }
 
-        //DEBUG
-        setDemoTagMode(true);
-        Optional<Transform3d> robotToDemoTag = getRobotToDemoTag();
+//DEBUG
+setDemoTagMode(true);
+Optional<Transform2d> robotToDemoTag = getRobotToDemoTag();
     }
 
 
@@ -52,11 +52,11 @@ public class AprilTagVision extends SubsystemBase {
 
     /** Get pose associated with Demo Tag.  If multiple cameras see the tag, pick the one with the lowest ambiguity */
     // TODO: maybe average the poses for the same tag?  weighted by ambiguity?
-    public Optional<Transform3d> getRobotToDemoTag() {
+    public Optional<Transform2d> getRobotToDemoTag() {
 
         // clear robotToTarget if we haven't seen the tag in a while
         if (Timer.getFPGATimestamp() - lastDemoTagTimestamp > demoTagPersistenceSeconds) {
-            robotToTarget = Optional.empty();
+            robotToTag = null;
         }
 
         double minAmbiguity = Double.POSITIVE_INFINITY; 
@@ -66,19 +66,21 @@ public class AprilTagVision extends SubsystemBase {
                         && target.getAmbiguity() > -0.1 
                         && target.getAmbiguity() < minAmbiguity) {
                     minAmbiguity = target.getAmbiguity();
-                    robotToTarget = Optional.of(camera.getRobotToCamera().plus(target.getCameraToTarget()));
+                    robotToTag = GeomUtil.transform3dTo2dXY( camera.getRobotToCamera().plus(target.getCameraToTarget()) );
                     lastDemoTagTimestamp = Timer.getFPGATimestamp();
+//DEBUG                    
+Logger.getInstance().recordOutput("AprilTagVision/CameraToDemoTag", GeomUtil.transform3dToPose2dXY(target.getCameraToTarget()));
                 }
             }
         }
 
-        if (robotToTarget.isPresent()) {
-            Logger.getInstance().recordOutput("AprilTagVision/RobotToDemoTag", GeomUtil.transform3dToPose3d(robotToTarget.get()));
+        if (robotToTag != null) {
+            Logger.getInstance().recordOutput("AprilTagVision/RobotToDemoTag", GeomUtil.transformToPose(robotToTag));
         } else {
             Logger.getInstance().recordOutput("AprilTagVision/RobotToDemoTag", new double[] {});
         }
 
-        return robotToTarget;
+        return Optional.ofNullable(robotToTag);
     } 
 
 }

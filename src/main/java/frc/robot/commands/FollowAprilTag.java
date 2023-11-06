@@ -12,10 +12,8 @@ import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -35,20 +33,20 @@ public class FollowAprilTag extends SequentialCommandGroup {
                         drive,
                         true,
                         () -> {
-                            Pose3d robotPose = new Pose3d(drive.getPose());
-                            Optional<Transform3d> robotToTag = aprilTagVision.getRobotToDemoTag();
+                            Pose2d fieldToRobot = drive.getPose();
+                            Optional<Transform2d> robotToTag = aprilTagVision.getRobotToDemoTag();
                             if (robotToTag.isPresent()) {
-                                Pose2d demoTagPose = robotPose.transformBy(robotToTag.get()).toPose2d();
-                                Pose2d driveToPose = demoTagPose.transformBy(
+                                Pose2d fieldToTag = fieldToRobot.transformBy(robotToTag.get());
+                                Pose2d driveToPose = fieldToTag.transformBy(
                                     new Transform2d(
                                         new Translation2d(targetDistance.get(), 0.0), 
                                         new Rotation2d(Math.PI)));
-                                Logger.getInstance().recordOutput("AprilTagVision/DemoTagPose", demoTagPose);
+                                Logger.getInstance().recordOutput("AprilTagVision/TagPose", fieldToTag);
                                 Logger.getInstance().recordOutput("AprilTagVision/DriveToPose", driveToPose);
                                 return driveToPose;
                             } else {
                                 // stay where you are if you don't see the demo tag
-                                Logger.getInstance().recordOutput("AprilTagVision/DemoTagPose", new double[] {});
+                                Logger.getInstance().recordOutput("AprilTagVision/TagPose", new double[] {});
                                 Logger.getInstance().recordOutput("AprilTagVision/DriveToPose", new double[] {});
                                 return drive.getPose();
                             }

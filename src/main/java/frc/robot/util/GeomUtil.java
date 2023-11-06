@@ -122,8 +122,29 @@ public class GeomUtil {
     return new Pose3d(transform.getTranslation(), transform.getRotation());
   }
 
+
   /**
-   * Converts a Translation3d to a Translation2d by extracting two dimensions (X and Y). chain
+   * Converts a Transform3d to a Transform2d by extracting two dimensions (X and Y)
+   *
+   * @param transform The original translation
+   * @return The resulting translation
+   */
+  public static Transform2d transform3dTo2dXY(Transform3d transform) {
+    return new Transform2d(transform.getTranslation().toTranslation2d(), transform.getRotation().toRotation2d());
+  }
+  
+    /**
+   * Converts a Transform3d to a Pose2d by extracting two dimensions (X and Y)
+   *
+   * @param transform The original translation
+   * @return The resulting translation
+   */
+  public static Pose2d transform3dToPose2dXY(Transform3d transform) {
+    return new Pose2d(transform.getTranslation().toTranslation2d(), transform.getRotation().toRotation2d());
+  }
+  
+  /**
+   * Converts a Translation3d to a Translation2d by extracting two dimensions (X and Y).
    *
    * @param transform The original translation
    * @return The resulting translation
@@ -133,7 +154,7 @@ public class GeomUtil {
   }
 
   /**
-   * Converts a Translation3d to a Translation2d by extracting two dimensions (X and Z). chain
+   * Converts a Translation3d to a Translation2d by extracting two dimensions (X and Z).
    *
    * @param transform The original translation
    * @return The resulting translation

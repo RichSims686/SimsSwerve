@@ -90,7 +90,7 @@ public class AprilTagCameraIOLimelight implements AprilTagCameraIO {
         Translation3d Tll = llPose3d.getTranslation();
         Rotation3d Rll = llPose3d.getRotation();
         return new Pose3d(
-            new Translation3d(Tll.getZ(), -Tll.getX(), -Tll.getY()),
-            new Rotation3d(Rll.getZ(), -Rll.getX(), Rll.getY() - Math.PI/2.0));
+            new Translation3d(Tll.getZ(), -Tll.getX(), Tll.getY()),
+            new Rotation3d(Rll.getZ(), -Rll.getX(), -Rll.getY() + Math.PI));
     }
 }

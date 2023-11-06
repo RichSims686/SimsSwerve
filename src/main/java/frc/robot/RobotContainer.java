@@ -228,7 +228,7 @@ public class RobotContainer {
                 drive::getCharacterizationVelocity)));   
                 
             autoChooser.addOption("DriveToPose Example", new AutoRoutine(AutoPosition.ORIGIN, new DriveToPose(drive, new Pose2d(new Translation2d(0.5, -0.5), new Rotation2d(+Math.PI/4)))));
-            autoChooser.addOption("Follow Tag Demo", new AutoRoutine(AutoPosition.ORIGIN, new FollowAprilTag(drive, vision)));
+            autoChooser.addOption("Follow Tag Demo", new AutoRoutine(AutoPosition.CENTER_OF_FIELD, new FollowAprilTag(drive, vision)));
         }
 
     private static class AutoRoutine {
@@ -242,12 +242,15 @@ public class RobotContainer {
     }
 
     public static enum AutoPosition {
-        ORIGIN;
+        ORIGIN,
+        CENTER_OF_FIELD;
 
         public Pose2d getPose() {
             switch (this) {
                 case ORIGIN:
                     return new Pose2d();
+                case CENTER_OF_FIELD:
+                    return new Pose2d(6, 6, new Rotation2d(Math.PI));
                 // other defined AutoPositions
                 default:
                     return new Pose2d();
