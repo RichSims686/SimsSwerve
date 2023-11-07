@@ -22,11 +22,10 @@ public class AprilTagVision extends SubsystemBase {
     public AprilTagVision() {
 
         cameras = new AprilTagCamera[] {
-            //DEBUG
-            // new AprilTagCamera(VisionConstants.cameraNames[0], new AprilTagCameraIOPhotonVision(VisionConstants.cameraNames[0], VisionConstants.robotToCameras[0])),
-            // new AprilTagCamera(VisionConstants.cameraNames[1], new AprilTagCameraIOPhotonVision(VisionConstants.cameraNames[1], VisionConstants.robotToCameras[1])),
-            // new AprilTagCamera(VisionConstants.cameraNames[2], new AprilTagCameraIOPhotonVision(VisionConstants.cameraNames[2], VisionConstants.robotToCameras[2])),
-            // new AprilTagCamera(VisionConstants.cameraNames[3], new AprilTagCameraIOPhotonVision(VisionConstants.cameraNames[3], VisionConstants.robotToCameras[3])),
+            new AprilTagCamera(VisionConstants.cameraNames[0], new AprilTagCameraIOPhotonVision(VisionConstants.cameraNames[0], VisionConstants.robotToCameras[0])),
+            new AprilTagCamera(VisionConstants.cameraNames[1], new AprilTagCameraIOPhotonVision(VisionConstants.cameraNames[1], VisionConstants.robotToCameras[1])),
+            new AprilTagCamera(VisionConstants.cameraNames[2], new AprilTagCameraIOPhotonVision(VisionConstants.cameraNames[2], VisionConstants.robotToCameras[2])),
+            new AprilTagCamera(VisionConstants.cameraNames[3], new AprilTagCameraIOPhotonVision(VisionConstants.cameraNames[3], VisionConstants.robotToCameras[3])),
             new AprilTagCamera(VisionConstants.cameraNames[4], new AprilTagCameraIOLimelight(VisionConstants.cameraNames[4], VisionConstants.robotToCameras[4]))
         };
     }
@@ -36,10 +35,6 @@ public class AprilTagVision extends SubsystemBase {
         for (var camera : cameras) {
             camera.periodic();
         }
-
-//DEBUG
-setDemoTagMode(true);
-Optional<Transform2d> robotToDemoTag = getRobotToDemoTag();
     }
 
 
@@ -60,7 +55,8 @@ Optional<Transform2d> robotToDemoTag = getRobotToDemoTag();
         }
 
         double minAmbiguity = Double.POSITIVE_INFINITY; 
-        for (var camera : cameras) {
+        // for (var camera : cameras) {
+            var camera = cameras[1];
             for (var target : camera.getTargetList()) {
                 if (target.getFiducialId() == Constants.VisionConstants.demoTagId 
                         && target.getAmbiguity() > -0.1 
@@ -68,11 +64,9 @@ Optional<Transform2d> robotToDemoTag = getRobotToDemoTag();
                     minAmbiguity = target.getAmbiguity();
                     robotToTag = GeomUtil.transform3dTo2dXY( camera.getRobotToCamera().plus(target.getCameraToTarget()) );
                     lastDemoTagTimestamp = Timer.getFPGATimestamp();
-//DEBUG                    
-Logger.getInstance().recordOutput("AprilTagVision/CameraToDemoTag", GeomUtil.transform3dToPose2dXY(target.getCameraToTarget()));
                 }
             }
-        }
+        // }
 
         if (robotToTag != null) {
             Logger.getInstance().recordOutput("AprilTagVision/RobotToDemoTag", GeomUtil.transformToPose(robotToTag));

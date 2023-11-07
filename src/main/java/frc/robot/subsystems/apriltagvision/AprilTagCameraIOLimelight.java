@@ -17,13 +17,25 @@ public class AprilTagCameraIOLimelight implements AprilTagCameraIO {
     private final String cameraName; 
     private final Transform3d robotToCamera;
 
+    public static enum LimelightPipeline {
+        NEURAL_DETECTOR (0),
+        APRILTAG (1);
+
+        public final int value;
+
+        private LimelightPipeline(int pipeline) {
+            this.value = pipeline;
+        }
+    }
+
+
     public AprilTagCameraIOLimelight(String cameraName, Transform3d robotToCamera) {
         // Important: need to configure robotToCamera pose using Limelight webUI
         // Important: need to configure AprilTag field map using Limelight webUI
         // https://docs.limelightvision.io/en/latest/apriltags_in_3d.html#robot-localization-botpose-and-megatag
         this.cameraName = cameraName;
         this.robotToCamera = robotToCamera;
-        LimelightHelpers.setPipelineIndex(cameraName, 1);
+        LimelightHelpers.setPipelineIndex(cameraName, LimelightPipeline.APRILTAG.value);
     }
 
     public void updateInputs(AprilTagCameraIOInputs inputs) {

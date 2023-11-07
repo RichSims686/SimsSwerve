@@ -250,7 +250,7 @@ public class RobotContainer {
                 case ORIGIN:
                     return new Pose2d();
                 case CENTER_OF_FIELD:
-                    return new Pose2d(6, 6, new Rotation2d(Math.PI));
+                    return new Pose2d(FieldConstants.fieldLength/2, FieldConstants.fieldWidth/2, new Rotation2d(Math.PI));
                 // other defined AutoPositions
                 default:
                     return new Pose2d();

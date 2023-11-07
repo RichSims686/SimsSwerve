@@ -25,6 +25,9 @@ public class FollowAprilTag extends SequentialCommandGroup {
     private static final LoggedTunableNumber targetDistance = new LoggedTunableNumber("FollowAprilTag/TargetDistance",
             2.0);
 
+    private Pose2d averagePose = new Pose2d();
+    private final double beta = 0.1; 
+
     public FollowAprilTag(Drive drive, AprilTagVision aprilTagVision) {
         addCommands(
             Commands.runOnce(() -> aprilTagVision.setDemoTagMode(true))
@@ -41,12 +44,37 @@ public class FollowAprilTag extends SequentialCommandGroup {
                                     new Transform2d(
                                         new Translation2d(targetDistance.get(), 0.0), 
                                         new Rotation2d(Math.PI)));
+
+                                // unwrap angular adjustment
+                                double prevAngle = averagePose.getRotation().getRadians();
+                                double newAngle = averagePose.getRotation().getRadians();
+                                double deltaAngle = prevAngle - newAngle;
+                                if (deltaAngle > Math.PI) {
+                                    deltaAngle -= 2*Math.PI;
+                                } else if (deltaAngle < -Math.PI) {
+                                    deltaAngle += 2*Math.PI;
+                                }
+                                newAngle = prevAngle - deltaAngle;
+
+                                if (averagePose.equals(new Pose2d())) {
+                                    averagePose = driveToPose;
+                                } else {
+                                    averagePose = new Pose2d(
+                                        new Translation2d(
+                                            (1-beta)*averagePose.getX() + beta*driveToPose.getX(),
+                                            (1-beta)*averagePose.getY() + beta*driveToPose.getY()),
+                                        new Rotation2d(
+                                            ((1-beta)*prevAngle + beta*newAngle)
+                                        ));
+                                }
                                 Logger.getInstance().recordOutput("AprilTagVision/TagPose", fieldToTag);
+                                Logger.getInstance().recordOutput("AprilTagVision/DriveToPoseAvg", averagePose);                                
                                 Logger.getInstance().recordOutput("AprilTagVision/DriveToPose", driveToPose);
                                 return driveToPose;
                             } else {
                                 // stay where you are if you don't see the demo tag
                                 Logger.getInstance().recordOutput("AprilTagVision/TagPose", new double[] {});
+                                Logger.getInstance().recordOutput("AprilTagVision/DriveToPoseAvg", new double[] {});                                
                                 Logger.getInstance().recordOutput("AprilTagVision/DriveToPose", new double[] {});
                                 return drive.getPose();
                             }
